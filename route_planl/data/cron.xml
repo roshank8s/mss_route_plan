@@ -1,0 +1,9 @@
+<odoo>
+    <record id="ir_cron_route_plan_populate" model="ir.cron">
+        <field name="name">Route Plan Populate</field>
+        <field name="model_id" ref="model_route_plan"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_create_and_populate()</field>
+        <field name="cron_expression">0 6 * * *</field>
+    </record>
+</odoo>

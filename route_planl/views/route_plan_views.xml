@@ -1,0 +1,71 @@
+<odoo>
+    <record id="view_route_plan_form" model="ir.ui.view">
+        <field name="name">route.plan.form</field>
+        <field name="model">route.plan</field>
+        <field name="arch" type="xml">
+            <form string="Route Plan">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="date"/>
+                    </group>
+                    <button name="action_assign_vehicles" type="object" string="Assign Vehicles" class="btn-primary"/>
+                    <field name="line_ids">
+                        <tree editable="bottom">
+                            <field name="partner_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="vehicle_id"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_route_plan_tree" model="ir.ui.view">
+        <field name="name">route.plan.tree</field>
+        <field name="model">route.plan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_route_plan_line_tree" model="ir.ui.view">
+        <field name="name">route.plan.line.tree</field>
+        <field name="model">route.plan.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="route_plan_id"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="vehicle_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <menuitem id="menu_route_plan_root" name="Route Plans" parent="stock.menu_stock_warehouse_mgmt" sequence="20"/>
+    <menuitem id="menu_route_plan" name="Route Plans" parent="menu_route_plan_root" action="action_route_plan"/>
+
+    <record id="action_route_plan" model="ir.actions.act_window">
+        <field name="name">Route Plans</field>
+        <field name="res_model">route.plan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_sale_order_form_inherit_route_plan" model="ir.ui.view">
+        <field name="name">sale.order.form.route.plan</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook/page[@name='delivery']" position="inside">
+                <group>
+                    <field name="route_plan_id" readonly="1"/>
+                    <field name="vehicle_id" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
