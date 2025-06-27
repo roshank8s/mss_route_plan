@@ -5,3 +5,4 @@ from . import sale_order
 from . import user_registration
 from . import field_service_optmization
 from . import unified_route_optimization
+from . import route_plan

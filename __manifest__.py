@@ -15,7 +15,9 @@ Route optimization in Odoo refers to enhancing the delivery and logistics proces
     'author': 'Master Software Solutions',
     'website': 'https://www.mastersoftwaresolutions.com/',
     'depends': [
-        'base', 'sale', 'mail', 'web','fleet','base_geolocalize','stock', 'contacts','mss_timepicker','project',
+        'base',
+        'sale',
+        'fleet',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -27,7 +29,9 @@ Route optimization in Odoo refers to enhancing the delivery and logistics proces
         'security/traktop_record_rules.xml',
         'views/user_registration.xml',
         'views/reporting_view.xml',
-        # 'data/cron.xml',
+        'views/route_plan.xml',
+        'views/sale_order_route_plan_inherit.xml',
+        'data/cron.xml',
     ],
     'demo': [
     ],

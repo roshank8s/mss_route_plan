@@ -1,0 +1,83 @@
+<odoo>
+  <data>
+    <!-- Route Plan List -->
+    <record id="view_route_plan_tree" model="ir.ui.view">
+      <field name="name">route.plan.tree</field>
+      <field name="model">route.plan</field>
+      <field name="arch" type="xml">
+        <tree string="Route Plans">
+          <field name="name"/>
+          <field name="date"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Route Plan Form -->
+    <record id="view_route_plan_form" model="ir.ui.view">
+      <field name="name">route.plan.form</field>
+      <field name="model">route.plan</field>
+      <field name="arch" type="xml">
+        <form string="Route Plan">
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="date"/>
+            </group>
+            <notebook>
+              <page string="Orders">
+                <field name="line_ids" mode="tree,form" context="{'default_plan_id': active_id}">
+                  <tree string="Orders">
+                    <field name="order_id"/>
+                    <field name="partner_id"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+            <footer>
+              <button name="action_generate_lines" type="object" string="Generate Lines" class="oe_highlight"/>
+              <button name="action_assign_routes" type="object" string="Assign Vehicles" class="oe_highlight"/>
+            </footer>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Route Plan Line Views -->
+    <record id="view_route_plan_line_tree" model="ir.ui.view">
+      <field name="name">route.plan.line.tree</field>
+      <field name="model">route.plan.line</field>
+      <field name="arch" type="xml">
+        <tree string="Route Plan Lines">
+          <field name="order_id"/>
+          <field name="partner_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_route_plan_line_form" model="ir.ui.view">
+      <field name="name">route.plan.line.form</field>
+      <field name="model">route.plan.line</field>
+      <field name="arch" type="xml">
+        <form string="Route Plan Line">
+          <sheet>
+            <group>
+              <field name="plan_id"/>
+              <field name="order_id"/>
+              <field name="partner_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_route_plan" model="ir.actions.act_window">
+      <field name="name">Route Plans</field>
+      <field name="res_model">route.plan</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_route_plan_root" name="Route Plans" parent="stock.menu_stock_root" action="action_route_plan" sequence="60"/>
+  </data>
+</odoo>

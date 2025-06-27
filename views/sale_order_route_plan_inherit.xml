@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <record id="view_sale_order_form_route_plan" model="ir.ui.view">
+      <field name="name">sale.order.form.route.plan</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='commitment_date']" position="after">
+          <field name="partner_shipping_id.delivery_day" string="Delivery Day" readonly="1"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

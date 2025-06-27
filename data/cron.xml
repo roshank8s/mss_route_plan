@@ -11,4 +11,15 @@
       <field name="active">True</field>
     </record>
   </data>
+  <data noupdate="1">
+    <record id="ir_cron_generate_route_plan" model="ir.cron">
+      <field name="name">Generate Daily Route Plan</field>
+      <field name="model_id" ref="model_route_plan"/>
+      <field name="state">code</field>
+      <field name="code">model.create_daily_plan()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active">True</field>
+    </record>
+  </data>
 </odoo>
