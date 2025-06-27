@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    
+    <record id="view_traktop_list_report" model="ir.ui.view">
+        <field name="name">traktop.list.report</field>
+        <field name="model">traktop</field>
+        <field name="arch" type="xml">
+
+          <list js_class="group_sortable_list" editable="bottom" create="false" delete="1" multi_edit="1" class="delivery-orders">
+            <field name="delivery_order_id" widget="many2one_button"/>
+            <field name="partner_id" type="row"/>
+            <field name="delivery_address"/>
+            <field name="travel_time" string="Drive Time (min)" type="col"/>
+            <field name="distance_km" string="Distance (km)" type="col"/>
+            <field name="vehicle_id" type="col"/>
+            <field name="delivery_date" widget="datetime" string="Delivery Date"/>
+            <field name="manual_vehicle_override" widget="boolean_toggle"/>
+            <field name="driver_name" type="row"/>
+          </list>
+        </field>
+    </record>
+
+    <record id="view_field_service_custom_list_report" model="ir.ui.view">
+        <field name="name">project.task.list.custom.report</field>
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+          <list>
+            <field name="name" type="col"/>
+            <field name="user_ids" widget="many2many_tags" string="Assignees"/>
+            <field name="vehicle_id" string="Vehicle" type="col"/>
+            <field name="delivery_address"/>
+            <field name="partner_id" string="Customer" type="col"/>
+            <field name="distance_km" type="row"/>
+            <field name="travel_time" type="row"/>
+            <field name="planned_date_start" string="Task Date"/>
+            <field name="stage_id"/>
+          </list>
+        </field>
+    </record>
+
+    <record id="view_traktop_pivot_report" model="ir.ui.view">
+        <field name="name">traktop.pivot.report</field>
+        <field name="model">traktop</field>
+        <field name="arch" type="xml">
+            <pivot string="Delivery Order Analysis">
+                <field name="vehicle_id" type="row"/>
+                <field name="delivery_date" type="col"/>
+            </pivot>
+        </field>
+    </record>
+    
+    <record id="action_report_delivery" model="ir.actions.act_window">
+        <field name="name">Delivery Order Analysis</field>
+        <field name="res_model">traktop</field>
+        <field name="view_mode">graph,list,pivot</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_traktop_list_report')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_traktop_pivot_report')})
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No delivery orders have been recorded yet
+            </p>
+        </field>
+    </record>
+
+    <record id="action_report_task" model="ir.actions.act_window">
+        <field name="name">Field Service Analysis</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">graph,list,pivot</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_field_service_custom_list_report')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tasks have been recorded yet
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_report" 
+            name="Reporting" 
+            parent="traktop_main_menu" 
+            sequence="40"/>
+    <menuitem id="menu_report_delivery"
+              name="Delivery Orders"
+              parent="menu_report"
+              action="action_report_delivery"
+              sequence="1"/>
+              
+    <menuitem id="menu_report_task"
+              name="Field Service"
+              parent="menu_report"
+              action="action_report_task"
+              sequence="2"/>          
+</odoo>
