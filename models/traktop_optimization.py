@@ -581,6 +581,58 @@ class RoutePlaning(models.Model):
                 _logger.info("Created Traktop record for delivery: %s", picking.name)
         return True
 
+    @api.model
+    def action_fetch_delivery_orders_today(self):
+        """Create route.planing entries only for today's confirmed orders.
+
+        * Determine today's weekday.
+        * Find partners whose ``delivery_day`` matches it.
+        * For those partners, look for confirmed sale orders (``state='sale'``)
+          where ``commitment_date`` falls on today.
+        * Create route.planing records for their related outgoing pickings if
+          none exist yet.
+        """
+
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
+        start_dt = datetime.combine(today, datetime.min.time())
+        end_dt = datetime.combine(today, datetime.max.time())
+
+        partners = self.env['res.partner'].sudo().search([
+            ('delivery_day', '=', weekday)
+        ])
+        _logger.info("action_fetch_delivery_orders_today: %s partners for %s", len(partners), weekday)
+
+        existing_ids = self.search([]).mapped('delivery_order_id.id')
+
+        for partner in partners:
+            orders = self.env['sale.order'].sudo().search([
+                ('state', '=', 'sale'),
+                ('partner_shipping_id', '=', partner.id),
+                ('commitment_date', '>=', fields.Datetime.to_string(start_dt)),
+                ('commitment_date', '<=', fields.Datetime.to_string(end_dt)),
+            ])
+            for so in orders:
+                pickings = so.picking_ids.filtered(lambda p: p.picking_type_id.code == 'outgoing')
+                for picking in pickings:
+                    if picking.id in existing_ids:
+                        continue
+                    self.create({
+                        'delivery_order_id': picking.id,
+                        'partner_id':        partner.id,
+                        'delivery_address':  partner.contact_address,
+                        'delivery_date':     so.commitment_date,
+                        'partner_latitude':  partner.partner_latitude,
+                        'partner_longitude': partner.partner_longitude,
+                        'build_time':        so.build_time or 0,
+                    })
+                    existing_ids.append(picking.id)
+                    _logger.info(
+                        "Created daily route.planing for %s (%s)",
+                        picking.name, partner.name
+                    )
+        return True
+
 
     def write(self, vals):
         # Check if vehicle_id is being updated manually (without the optimization context)
@@ -1209,7 +1261,8 @@ class StockPicking(models.Model):
                 if traktop_rec:
                     _logger.info("Removing Traktop record(s) for picking %s on button_validate.", picking.name)
                     traktop_rec.sudo().unlink()
-            self.env['route.planing'].sudo().action_fetch_delivery_orders()
+            # Regenerate today's route planing entries after validation
+            self.env['route.planing'].sudo().action_fetch_delivery_orders_today()
         return res
 
 ###########################################
