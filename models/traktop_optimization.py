@@ -357,7 +357,11 @@ class RoutePlaning(models.Model):
         import pytz
         from datetime import datetime, time as dt_time
 
-        vehicles = self.env['fleet.vehicle'].sudo().search([])
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
+        vehicles = self.env['fleet.vehicle'].sudo().search([
+            ('delivery_days.name', '=', weekday)
+        ])
         vehicle_data = []
 
         # Determine the user’s timezone (fallback to UTC)
@@ -638,7 +642,7 @@ class RoutePlaning(models.Model):
         # Check if vehicle_id is being updated manually (without the optimization context)
         if 'vehicle_id' in vals and not self.env.context.get('from_optimization', False):
             vals['manual_vehicle_override'] = True
-        return super(Traktop, self).write(vals)
+        return super(RoutePlaning, self).write(vals)
     
 ######################################################################################
     @api.model
@@ -656,9 +660,12 @@ class RoutePlaning(models.Model):
         """
         # ───────────────────────────────────────────────────────────
         # 1) Gather all “assigned” outgoing pickings:
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
         deliveries = self.env['stock.picking'].sudo().search([
             ('state', '=', 'assigned'),
             ('picking_type_id.code', '=', 'outgoing'),
+            ('partner_id.delivery_day', '=', weekday),
         ])
         _logger.info("fetch_jobs_data: Found %s delivery orders in 'assigned' state", len(deliveries))
 
