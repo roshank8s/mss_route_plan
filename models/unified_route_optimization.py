@@ -213,7 +213,7 @@ class UnifiedRouteOptimizer(models.TransientModel):
 
 
     def _build_traktop_jobs(self):
-        return self.env['traktop'].sudo().fetch_jobs_data()
+        return self.env['route.planing'].sudo().fetch_jobs_data()
 
     def _build_fsm_jobs(self):
         closed_stages = self.env['project.task.type'].search([('fold', '=', True)])
@@ -339,10 +339,10 @@ class UnifiedRouteOptimizer(models.TransientModel):
                             if picking.sale_id:
                                 picking.sale_id.sudo().write({'commitment_date': planned})
                             
-                            # 🔧 NEW: Update related traktop record
-                            traktop = self.env['traktop'].sudo().search([('delivery_order_id', '=', picking.id)], limit=1)
-                            if traktop:
-                                traktop.sudo().write({
+                            # 🔧 NEW: Update related Route Planing record
+                            trak_rec = self.env['route.planing'].sudo().search([('delivery_order_id', '=', picking.id)], limit=1)
+                            if trak_rec:
+                                trak_rec.sudo().write({
                                     'delivery_date': planned,
                                     'travel_time': cum_dur / 60.0,
                                     'distance_km': cum_dist / 1000.0,

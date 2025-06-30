@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_traktop_user,traktop.user,model_traktop,base.group_user,1,0,0,0
-access_traktop_manager,traktop.manager,model_traktop,base.group_system,1,1,1,1
+access_traktop_user,route.planing.user,model_route_planing,base.group_user,1,0,0,0
+access_traktop_manager,route.planing.manager,model_route_planing,base.group_system,1,1,1,1
 access_sale_order_traktop,sale_order_traktop,model_sale_order,base.group_user,1,1,0,0
 access_stock_picking_traktop,stock_picking_traktop,model_stock_picking,base.group_user,1,1,0,0
 access_user_registration_user,user.registration.user,model_mss_route_plan_user_registration,base.group_user,1,0,0,0

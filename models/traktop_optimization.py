@@ -24,9 +24,9 @@ _logger = logging.getLogger(__name__)
 # Traktop Model – Using Delivery Order Link
 ###########################################
 
-class Traktop(models.Model):
-    _name = 'traktop'
-    _description = 'Traktop'
+class RoutePlaning(models.Model):
+    _name = 'route.planing'
+    _description = 'Route Planing'
     _inherit = ['mail.thread']
 
     active = fields.Boolean(string="Active", default=True)
@@ -174,11 +174,11 @@ class Traktop(models.Model):
     
     def action_view_map(self):
         self.ensure_one()
-        map_view_id = self.env.ref('traktop.traktop_map_view').id
+        map_view_id = self.env.ref('mss_route_plan.traktop_map_view').id
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Traktop Map View',
-            'res_model': 'traktop',
+            'name': 'Route Planing Map View',
+            'res_model': 'route.planing',
             'res_id': self.id,
             'view_mode': 'form',
             'views': [(map_view_id, 'form')],
@@ -1090,11 +1090,11 @@ class SaleOrder(models.Model):
                 lambda p: p.picking_type_id.code == 'outgoing' and p.state == 'assigned'
             )
             for picking in pickings:
-                existing = self.env['traktop'].search(
+                existing = self.env['route.planing'].search(
                     [('delivery_order_id', '=', picking.id)], limit=1
                 )
                 if not existing:
-                    self.env['traktop'].create({
+                    self.env['route.planing'].create({
                         'delivery_order_id': picking.id,
                         'partner_id':         order.partner_shipping_id.id,
                         'delivery_address':   order.partner_shipping_id.contact_address,
@@ -1117,11 +1117,11 @@ class SaleOrder(models.Model):
                     lambda p: p.picking_type_id.code == 'outgoing' and p.state == 'assigned'
                 )
                 for picking in pickings:
-                    existing = self.env['traktop'].search(
+                    existing = self.env['route.planing'].search(
                         [('delivery_order_id', '=', picking.id)], limit=1
                     )
                     if not existing:
-                        self.env['traktop'].create({
+                        self.env['route.planing'].create({
                             'delivery_order_id': picking.id,
                             'partner_id':         order.partner_shipping_id.id,
                             'delivery_address':   order.partner_shipping_id.contact_address,
@@ -1141,7 +1141,7 @@ class SaleOrder(models.Model):
     def unlink(self):
         for order in self:
             for picking in order.picking_ids:
-                traktop_rec = self.env['traktop'].search([('delivery_order_id', '=', picking.id)])
+                traktop_rec = self.env['route.planing'].search([('delivery_order_id', '=', picking.id)])
                 if traktop_rec:
                     traktop_rec.unlink()
                     _logger.info("Sale Order %s deleted: removed Traktop record for delivery %s", order.name, picking.name)
@@ -1162,10 +1162,10 @@ class StockPicking(models.Model):
                     picking_state = picking.state
                     _logger.info("Processing picking %s with new state: %s", picking.name, picking_state)
                     # Use sudo() to ensure we have the necessary rights
-                    traktop_records = self.env['traktop'].sudo().search([('delivery_order_id', '=', picking.id)])
+                    traktop_records = self.env['route.planing'].sudo().search([('delivery_order_id', '=', picking.id)])
                     if picking_state == 'assigned':
                         if not traktop_records:
-                            self.env['traktop'].sudo().create({
+                            self.env['route.planing'].sudo().create({
                                 'delivery_order_id': picking.id,
                                 'partner_id': picking.partner_id.id,
                                 'delivery_address': picking.partner_id.contact_address,
@@ -1187,7 +1187,7 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).action_done()
         for picking in self:
             if picking.picking_type_id.code == 'outgoing':
-                traktop_rec = self.env['traktop'].sudo().search([
+                traktop_rec = self.env['route.planing'].sudo().search([
                     ('delivery_order_id', '=', picking.id)
                 ])
                 if traktop_rec:
@@ -1203,13 +1203,13 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).button_validate()
         for picking in self:
             if picking.picking_type_id.code == 'outgoing' and picking.state == 'done':
-                traktop_rec = self.env['traktop'].sudo().search([
+                traktop_rec = self.env['route.planing'].sudo().search([
                     ('delivery_order_id', '=', picking.id)
                 ])
                 if traktop_rec:
                     _logger.info("Removing Traktop record(s) for picking %s on button_validate.", picking.name)
                     traktop_rec.sudo().unlink()
-            self.env['traktop'].sudo().action_fetch_delivery_orders()
+            self.env['route.planing'].sudo().action_fetch_delivery_orders()
         return res
 
 ###########################################

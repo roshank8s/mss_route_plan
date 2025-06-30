@@ -3,7 +3,7 @@
     <!-- Scheduled Action to action_fetch_delivery_orders -->
     <record id="ir_cron_action_fetch_delivery_orders" model="ir.cron">
       <field name="name">Fetch Delivery Orders</field>
-      <field name="model_id" ref="model_traktop"/>
+      <field name="model_id" ref="model_route_planing"/>
       <field name="state">code</field>
       <field name="code">model.action_fetch_delivery_orders()</field>
       <field name="interval_number">2</field>

@@ -52,7 +52,7 @@ export class AddressMultipleMarkersGmap extends Component {
             // 2) Fetch all data once
             try {
                 const [records, vehicleData] = await Promise.all([
-                    this.orm.call("traktop", "search_read", [
+                    this.orm.call("route.planing", "search_read", [
                         [],
                         [
                             "id", "partner_latitude", "partner_longitude", "display_name", 
@@ -60,7 +60,7 @@ export class AddressMultipleMarkersGmap extends Component {
                             "step_type", "delivery_date",
                         ],
                     ]),
-                    this.orm.call("traktop", "fetch_vehicle_data", []),
+                    this.orm.call("route.planing", "fetch_vehicle_data", []),
                 ]);
                 this.allRecords = records;
                 this.allVehicleData = vehicleData;
@@ -236,7 +236,7 @@ export class AddressMultipleMarkersGmap extends Component {
             }
 
             // --- Render Optimization Button for Admin ---
-            const isAdmin = await this.orm.call("traktop", "is_admin", []);
+            const isAdmin = await this.orm.call("route.planing", "is_admin", []);
             if (isAdmin) {
                 const optimizationBtn = document.createElement("button");
                 optimizationBtn.textContent = "Optimization";
@@ -247,7 +247,7 @@ export class AddressMultipleMarkersGmap extends Component {
                 });
                 optimizationBtn.addEventListener("click", async () => {
                      try {
-                        const response = await this.orm.call("traktop", "get_optimized_rec_created", []);
+                        const response = await this.orm.call("route.planing", "get_optimized_rec_created", []);
                         if (response && response.params) {
                             this.notification.add(response.params.message, { title: response.params.title, type: response.params.type, sticky: response.params.sticky });
                             if (response.params.next && response.params.next.tag === 'reload') location.reload();
@@ -437,7 +437,7 @@ export class AddressMultipleMarkersGmap extends Component {
 
     async _getGMapAPIKey() {
         if (!this._gmapApiKey) {
-            this._gmapApiKey = await this.orm.call("traktop", "get_google_map_api_key", []);
+            this._gmapApiKey = await this.orm.call("route.planing", "get_google_map_api_key", []);
         }
         return this._gmapApiKey;
     }
