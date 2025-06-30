@@ -21,6 +21,7 @@
                         <!-- Other Fields -->
                         <field name="skills" class="o_vehicle_skills"/>
                         <field name="type" class="o_vehicle_type"/>
+                        <field name="delivery_days" widget="many2many_tags"/>
 
                         <!-- Working Hours Start + End -->
                         <label for="working_hours_start" string="Working Hours"/>

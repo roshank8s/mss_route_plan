@@ -1226,11 +1226,21 @@ class ResPartner(models.Model):
     ne_longitude = fields.Char(string="North-East Longitude")
     sw_latitude = fields.Char(string="South-East Latitude")
     sw_longitude = fields.Char(string="South-East Longitude")
-    
+
     live_latitude = fields.Float(string="Live Latitude", digits=(10, 7))
     live_longitude = fields.Float(string="Live Longitude", digits=(10, 7))
     last_seen = fields.Datetime(string="Last Seen")
     speed = fields.Float(string="Speed")
+
+    delivery_day = fields.Selection([
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ], string="Delivery Day")
 
     @api.model
     def create(self, vals):
@@ -1264,6 +1274,21 @@ class ResConfigSettings(models.TransientModel):
 
     google_map_api_key = fields.Char(string="Google Map API Key", config_parameter="address_autocomplete_gmap_widget.google_map_api_key")
 
+
+class DeliveryDay(models.Model):
+    _name = 'delivery.day'
+    _description = 'Delivery Day'
+
+    name = fields.Selection([
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ], string='Day', required=True)
+
 class FleetVehicle(models.Model):
     _inherit = "fleet.vehicle"
 
@@ -1274,6 +1299,13 @@ class FleetVehicle(models.Model):
     ne_longitude = fields.Char(string="North-East Longitude")
     sw_latitude = fields.Char(string="South-East Latitude")
     sw_longitude = fields.Char(string="South-East Longitude")
+
+    delivery_days = fields.Many2many(
+        'delivery.day',
+        'fleet_vehicle_delivery_day_rel',
+        'vehicle_id', 'day_id',
+        string='Delivery Days'
+    )
     address = fields.Char(string="Address")
     longitude = fields.Char(string="Longitude")
     latitude = fields.Char(string="Latitude")

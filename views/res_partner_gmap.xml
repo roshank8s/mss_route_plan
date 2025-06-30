@@ -18,6 +18,7 @@
                               'ne_longitude':'ne_longitude',
                               'sw_latitude':'sw_latitude',
                               'sw_longitude':'sw_longitude'}"/>
+                <field name="delivery_day"/>
             </xpath>
         </field>
     </record>
