@@ -511,9 +511,12 @@ class RoutePlaning(models.Model):
         """
         # ───────────────────────────────────────────────────────────
         # 1) Gather all “assigned” outgoing pickings:
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
         deliveries = self.env['stock.picking'].sudo().search([
             ('state', '=', 'assigned'),
             ('picking_type_id.code', '=', 'outgoing'),
+            ('partner_id.delivery_day', '=', weekday),
         ])
         _logger.info("fetch_jobs_data: Found %s delivery orders in 'assigned' state", len(deliveries))
 
