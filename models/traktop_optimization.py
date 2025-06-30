@@ -414,10 +414,23 @@ class RoutePlaning(models.Model):
     
     @api.model
     def action_fetch_delivery_orders(self):
-        # For manual/testing – create Traktop records for delivery orders in 'assigned' state
+        """Create :model:`route.planing` entries for today's open deliveries.
+
+        Historically this helper fetched **all** outgoing pickings in the
+        ``assigned`` state which could lead to a mismatch with
+        :py:meth:`fetch_jobs_data` because that method only builds VROOM jobs
+        for partners scheduled to receive goods today.  When the two sets were
+        out of sync the optimizer received an empty jobs list and returned a
+        ``400`` error.  We now filter by the partner's ``delivery_day`` so the
+        created records match those that will be sent to the optimizer.
+        """
+
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
         deliveries = self.env['stock.picking'].sudo().search([
             ('state', '=', 'assigned'),
-            ('picking_type_id.code', '=', 'outgoing')
+            ('picking_type_id.code', '=', 'outgoing'),
+            ('partner_id.delivery_day', '=', weekday),
         ])
         _logger.info("action_fetch_delivery_orders: Found %s delivery orders in 'assigned' state", len(deliveries))
         existing_ids = self.search([]).mapped('delivery_order_id.id')
