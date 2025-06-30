@@ -108,7 +108,7 @@ class Traktop(models.Model):
     @api.depends('create_uid')
     def _compute_usage_display(self):
         for record in self:
-            registration = self.env['mss_route_optimization.user.registration'].search([
+            registration = self.env['mss_route_plan.user.registration'].search([
                 ('partner_id', '=', record.create_uid.partner_id.id),
                 ('company_id', '=', record.env.company.id),
             ], limit=1)
@@ -120,7 +120,7 @@ class Traktop(models.Model):
     def action_view_products(self):
         self.ensure_one()
         # Use your module’s XML‑ID here
-        action = self.env.ref('mss_route_optimization.action_traktop_products').sudo().read()[0]
+        action = self.env.ref('mss_route_plan.action_traktop_products').sudo().read()[0]
         action.update({
             'domain': [('picking_id', '=', self.delivery_order_id.id)],
             'context': {'default_picking_id': self.delivery_order_id.id},
@@ -518,7 +518,7 @@ class Traktop(models.Model):
             "jobs": jobs,
             "options": {"g": True},
         }
-        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_optimization.route_api')
+        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_plan.route_api')
         headers = {
             'Content-Type': 'application/json',
             'apikey': apikey  # or 'Authorization': f'Bearer {api_key}' if required
@@ -726,8 +726,8 @@ class Traktop(models.Model):
                     'view_mode': 'form',
                     'target': 'new',
                     'name': 'API Limit Reached',
-                    'view_id': self.env.ref('mss_route_optimization.view_api_limit_popup').id,
-                    'views': [(self.env.ref('mss_route_optimization.view_api_limit_popup').id, 'form')],
+                    'view_id': self.env.ref('mss_route_plan.view_api_limit_popup').id,
+                    'views': [(self.env.ref('mss_route_plan.view_api_limit_popup').id, 'form')],
                 }
 
             routes     = optimized.get("routes", [])
@@ -942,7 +942,7 @@ class Traktop(models.Model):
             # ── 6) Recompute route_sequence & log usage & notify success
             self.recalculate_route_sequence()
             try:
-                reg = self.env['mss_route_optimization.user.registration']\
+                reg = self.env['mss_route_plan.user.registration']\
                            .search([], order='create_date desc', limit=1)
                 if reg.email:
                     resp = requests.post(
@@ -1040,7 +1040,7 @@ class Traktop(models.Model):
             try:
                 _logger.info("Recalculating route sequence for vehicle %s using payload: %s", vehicle_rec.name, json.dumps(payload, indent=4))
                 # response = requests.post("https://route.trakop.com:8100", json=payload, timeout=30)
-                apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_optimization.route_api')
+                apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_plan.route_api')
                 headers = {
                     'Content-Type': 'application/json',
                     'apikey': apikey

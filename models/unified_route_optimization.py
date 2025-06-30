@@ -254,7 +254,7 @@ class UnifiedRouteOptimizer(models.TransientModel):
 
     def _call_vroom(self, vehicles, jobs):
         vroom_url = "https://optimize.trakop.com/"
-        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_optimization.route_api')
+        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_plan.route_api')
 
         payload = {
             'vehicles': vehicles,
@@ -301,7 +301,7 @@ class UnifiedRouteOptimizer(models.TransientModel):
                     'view_mode': 'form',
                     'target': 'new',
                     'name': 'API Limit Reached',
-                    'view_id': self.env.ref('mss_route_optimization.view_api_limit_popup').id,
+                    'view_id': self.env.ref('mss_route_plan.view_api_limit_popup').id,
                 }
 
             routes = result.get('routes', [])

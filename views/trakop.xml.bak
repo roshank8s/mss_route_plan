@@ -125,7 +125,7 @@
         </record>
 
         <!-- Menu Items -->
-        <menuitem id="traktop_main_menu" name="Route Optimization" sequence="10" web_icon="mss_route_optimization,static/description/icon.png"/>
+        <menuitem id="traktop_main_menu" name="Route Optimization" sequence="10" web_icon="mss_route_plan,static/description/icon.png"/>
         <menuitem id="traktop_menu" name="Delivery Orders" action="action_traktop" parent="traktop_main_menu"/>
         <menuitem id="menu_traktop_multiple_markers" name="Map View" parent="traktop_main_menu" action="action_traktop_multiple_markers" sequence="20"/>
         <menuitem id="menu_traktop_map_optimize" name="Optimization" parent="traktop_main_menu"

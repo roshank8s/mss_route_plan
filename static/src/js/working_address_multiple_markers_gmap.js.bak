@@ -81,15 +81,15 @@ export class AddressMultipleMarkersGmap extends Component {
 
             const icons = {
                 start: {
-                    url: "/mss_route_optimization/static/description/Start.png",
+                    url: "/mss_route_plan/static/description/Start.png",
                     scaledSize: new google.maps.Size(50, 50),
                 },
                 job: {
-                    url: "/mss_route_optimization/static/description/pinblue.png",
+                    url: "/mss_route_plan/static/description/pinblue.png",
                     scaledSize: new google.maps.Size(50, 50),
                 },
                 end: {
-                    url: "/mss_route_optimization/static/description/End.png",
+                    url: "/mss_route_plan/static/description/End.png",
                     scaledSize: new google.maps.Size(50, 50),
                 },
             };

@@ -297,7 +297,7 @@ class FieldServiceRouteStep(models.Model):
     @api.model
     def integrate_vroom(self):
         vroom_url = "https://optimize.trakop.com/"
-        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_optimization.route_api')
+        apikey = self.env['ir.config_parameter'].sudo().get_param('mss_route_plan.route_api')
 
         vehicles = self.fetch_vehicle_data()
         jobs = self.fetch_jobs_data()
@@ -348,7 +348,7 @@ class FieldServiceRouteStep(models.Model):
                     'view_mode': 'form',
                     'target': 'new',
                     'name': 'API Limit Reached',
-                    'view_id': self.env.ref('mss_route_optimization.view_api_limit_popup').id,
+                    'view_id': self.env.ref('mss_route_plan.view_api_limit_popup').id,
                 }
 
             routes = optimized_data.get("routes", [])
@@ -560,8 +560,8 @@ class ResPartner(models.Model):
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    route_api = fields.Char(string="Routing API Key", config_parameter="mss_route_optimization.route_api")
-    # route_url = fields.Char(string="Routing API URL", config_parameter="mss_route_optimization.route_url",
+    route_api = fields.Char(string="Routing API Key", config_parameter="mss_route_plan.route_api")
+    # route_url = fields.Char(string="Routing API URL", config_parameter="mss_route_plan.route_url",
     #                         default="http://solver.vroom-project.org")
 
 

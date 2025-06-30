@@ -3,8 +3,8 @@ access_traktop_user,traktop.user,model_traktop,base.group_user,1,0,0,0
 access_traktop_manager,traktop.manager,model_traktop,base.group_system,1,1,1,1
 access_sale_order_traktop,sale_order_traktop,model_sale_order,base.group_user,1,1,0,0
 access_stock_picking_traktop,stock_picking_traktop,model_stock_picking,base.group_user,1,1,0,0
-access_user_registration_user,user.registration.user,model_mss_route_optimization_user_registration,base.group_user,1,0,0,0
-access_user_registration_admin,user.registration.admin,model_mss_route_optimization_user_registration,base.group_system,1,1,1,1
+access_user_registration_user,user.registration.user,model_mss_route_plan_user_registration,base.group_user,1,0,0,0
+access_user_registration_admin,user.registration.admin,model_mss_route_plan_user_registration,base.group_system,1,1,1,1
 access_user_register_wizard_admin,user.register.wizard,model_user_register_wizard,base.group_system,1,1,1,1
 access_api_limit_popup,access_api_limit_popup,model_api_limit_popup,,1,0,1,0
 access_open_module_trigger_user,open.module.trigger,model_open_module_trigger,base.group_user,1,1,1,1
