@@ -97,7 +97,7 @@ class Traktop(models.Model):
     def action_view_products(self):
         self.ensure_one()
         # Use your module’s XML‑ID here
-        action = self.env.ref('mss_route_optimization.action_traktop_products').sudo().read()[0]
+        action = self.env.ref('mss_route_plan.action_traktop_products').sudo().read()[0]
         action.update({
             'domain': [('picking_id', '=', self.delivery_order_id.id)],
             'context': {'default_picking_id': self.delivery_order_id.id},

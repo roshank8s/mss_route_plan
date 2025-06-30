@@ -8,7 +8,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class UserRegistration(models.Model):
-    _name = 'mss_route_optimization.user.registration'
+    _name = 'mss_route_plan.user.registration'
     _description = 'User Registration'
 
     partner_id = fields.Many2one('res.partner', string="User Contact")
@@ -165,7 +165,7 @@ class UserRegisterWizard(models.TransientModel):
         res['country_id'] = partner.country_id.id
 
         res['google_map_api_key'] = config.get_param('address_autocomplete_gmap_widget.google_map_api_key', '')
-        res['route_api'] = config.get_param('mss_route_optimization.route_api', '')
+        res['route_api'] = config.get_param('mss_route_plan.route_api', '')
 
         return res
 
@@ -173,7 +173,7 @@ class UserRegisterWizard(models.TransientModel):
         if not self.email:
             raise UserError("Email is required.")
 
-        registration = self.env['mss_route_optimization.user.registration'].create({
+        registration = self.env['mss_route_plan.user.registration'].create({
             'partner_id': self.partner_id.id,
             'company_id': self.company_id.id,
             'google_map_api_key': self.google_map_api_key,
@@ -203,7 +203,7 @@ class UserRegisterWizard(models.TransientModel):
         if self.google_map_api_key:
             config.set_param('address_autocomplete_gmap_widget.google_map_api_key', self.google_map_api_key)
         if self.route_api:
-            config.set_param('mss_route_optimization.route_api', self.route_api)
+            config.set_param('mss_route_plan.route_api', self.route_api)
 
         # External API call
         api_url = 'https://optimize.trakop.com/route/register'
@@ -252,7 +252,7 @@ class UserRegisterWizard(models.TransientModel):
 
             if response.status_code == 200 and 'api_key' in response_json:
                 api_key = response_json['api_key']
-                config.set_param('mss_route_optimization.route_api', api_key)
+                config.set_param('mss_route_plan.route_api', api_key)
 
                 # 🔁 Log Usage API Call
                 usage_payload = {
@@ -330,7 +330,7 @@ class ResUsers(models.Model):
     def open_module_action(self):
         _logger.info(">>> open_module_action() called by user ID: %s (Partner ID: %s)", self.env.user.id, self.env.user.partner_id.id)
 
-        registration = self.env['mss_route_optimization.user.registration'].sudo().search([
+        registration = self.env['mss_route_plan.user.registration'].sudo().search([
             ('route_api', '!=', False)
         ], limit=1)
 
@@ -341,7 +341,7 @@ class ResUsers(models.Model):
 
         if registration and registration.route_api:
             _logger.info(">>> route_api found. Granting access to module (action_traktop).")
-            return self.env.ref('mss_route_optimization.action_traktop').sudo().read()[0]
+            return self.env.ref('mss_route_plan.action_traktop').sudo().read()[0]
         else:
             _logger.info(">>> route_api not found. Opening registration wizard.")
             _logger.info(">>> Admin user. Opening registration wizard.")
@@ -351,7 +351,7 @@ class ResUsers(models.Model):
                 'res_model': 'user.register.wizard',
                 'view_mode': 'form',
                 'target': 'new',
-                'view_id': self.env.ref('mss_route_optimization.view_user_register_wizard').id,
+                'view_id': self.env.ref('mss_route_plan.view_user_register_wizard').id,
             }
 
 class OpenModuleTrigger(models.TransientModel):

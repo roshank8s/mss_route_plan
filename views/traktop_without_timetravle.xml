@@ -239,7 +239,7 @@
     <menuitem id="traktop_main_menu"
               name="Route Optimization"
               sequence="10"
-              web_icon="mss_route_optimization,static/description/icon.png"/>
+              web_icon="mss_route_plan,static/description/icon.png"/>
     <menuitem id="traktop_menu"
               name="Delivery Orders"
               action="action_traktop"

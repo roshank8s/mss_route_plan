@@ -6,7 +6,7 @@ import { useService } from "@web/core/utils/hooks";
 import { loadJS } from "@web/core/assets";
 
 export class FieldServiceMapView extends Component {
-    static template = "mss_route_optimization.FieldServiceMapView";
+    static template = "mss_route_plan.FieldServiceMapView";
     static props = {
         readonly: Boolean,
         id: Number,
@@ -80,7 +80,7 @@ export class FieldServiceMapView extends Component {
         if (!controlPanel) return;
 
         // Usage Display Banner
-        this.orm.call("mss_route_optimization.user.registration", "search_read", [[]], { fields: ["usage_display"], limit: 1 }).then(result => {
+        this.orm.call("mss_route_plan.user.registration", "search_read", [[]], { fields: ["usage_display"], limit: 1 }).then(result => {
             const usageDisplay = result.length ? result[0].usage_display : "N/A";
             if (!document.querySelector(".custom-usage-banner")) {
                 const banner = document.createElement("div");
@@ -242,9 +242,9 @@ export class FieldServiceMapView extends Component {
     }
     _renderVehicleRoutes(byVehicle) {
         const icons = {
-            start: { url: "/mss_route_optimization/static/description/startEnd.svg", scaledSize: new google.maps.Size(40, 40) },
-            job: { url: "/mss_route_optimization/static/description/pinpoint.svg", scaledSize: new google.maps.Size(30, 30) },
-            end: { url: "/mss_route_optimization/static/description/startEnd.svg", scaledSize: new google.maps.Size(40, 40) },
+            start: { url: "/mss_route_plan/static/description/startEnd.svg", scaledSize: new google.maps.Size(40, 40) },
+            job: { url: "/mss_route_plan/static/description/pinpoint.svg", scaledSize: new google.maps.Size(30, 30) },
+            end: { url: "/mss_route_plan/static/description/startEnd.svg", scaledSize: new google.maps.Size(40, 40) },
         };
         let _lastHue = Math.random() * 360;
         const getRandomColor = () => {
@@ -338,7 +338,7 @@ export class FieldServiceMapView extends Component {
     _setupLiveLocationUpdates() {
         let userLiveMarkers = {};
         const liveIcon = {
-            url: "/mss_route_optimization/static/src/img/box-truck.png",
+            url: "/mss_route_plan/static/src/img/box-truck.png",
             scaledSize: new google.maps.Size(40, 40),
             anchor: new google.maps.Point(20, 20),
         };

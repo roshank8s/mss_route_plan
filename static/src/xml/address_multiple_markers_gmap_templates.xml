@@ -12,7 +12,7 @@
             </div>
         </div>
     </t>
-    <t t-name="mss_route_optimization.FieldServiceMapView" owl="1">
+    <t t-name="mss_route_plan.FieldServiceMapView" owl="1">
         <!-- Flex container with two columns -->
         <div class="o_address_multiple_markers_gmap" style="display: flex; height: 695px;">
             <!-- Left Column: List of field service tasks with route headers -->
@@ -25,7 +25,7 @@
             </div>
         </div>
     </t>
-    <t t-name="mss_route_optimization.UnifiedRouteMapView" owl="1">
+    <t t-name="mss_route_plan.UnifiedRouteMapView" owl="1">
         <div class="o_address_multiple_markers_gmap" style="display: flex; height: 695px;">
             <div class="left-col map-left-view">
                 <ul t-ref="recordList" class="dl-list-view"></ul>

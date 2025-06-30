@@ -3,7 +3,7 @@
 
 
 {
-    'name': 'Route Optimization',
+    'name': 'Route Planing',
     'version': '1.0',
     'category': '',
     'sequence': 200,
@@ -38,7 +38,7 @@ Route optimization in Odoo refers to enhancing the delivery and logistics proces
     'license': 'LGPL-3',
     'assets': {
         'web.assets_backend': [
-            'mss_route_optimization/static/src/**/*',
+            'mss_route_plan/static/src/**/*',
         ],
         'web.assets_frontend': [
         ],
