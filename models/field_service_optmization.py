@@ -338,7 +338,7 @@ class FieldServiceRouteStep(models.Model):
     @api.model
     def get_optimized_routes(self):
         try:
-            _logger.info("Starting Field Service Route Optimization")
+            _logger.info("Starting Field Service Route Planing")
             optimized_data = self.integrate_vroom()
 
             if optimized_data.get("rate_limited"):
@@ -431,9 +431,9 @@ class FieldServiceRouteStep(models.Model):
             }
 
         except Exception as e:
-            _logger.exception("Error during field service route optimization")
+            _logger.exception("Error during field service route planing")
             raise UserError(_(
-                "An unexpected error occurred during route optimization: %s") % e
+                "An unexpected error occurred during route planing: %s") % e
             )
 
 

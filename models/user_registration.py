@@ -356,4 +356,4 @@ class ResUsers(models.Model):
 
 class OpenModuleTrigger(models.TransientModel):
     _name = 'open.module.trigger'
-    _description = 'Trigger for opening Route Optimization module'        
+    _description = 'Trigger for opening Route Planing module'
