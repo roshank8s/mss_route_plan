@@ -12,3 +12,5 @@ access_field_service_route_step_system,field.service.route.step.system,model_fie
 access_field_service_route_step_fsm_user,field.service.route.step.fsm.user,model_field_service_route_step,,1,0,0,0
 access_route_unified_step_user,route.unified.step,model_route_unified_step,base.group_user,1,1,1,1
 access_unified_route_optimizer,unified.route.optimizer,model_unified_route_optimizer,base.group_user,1,1,1,1
+access_delivery_day_user,delivery.day.user,model_delivery_day,base.group_user,1,0,0,0
+access_delivery_day_admin,delivery.day.admin,model_delivery_day,base.group_system,1,1,1,1
