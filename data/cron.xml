@@ -1,11 +1,11 @@
 <odoo>
   <data noupdate="1">
-    <!-- Scheduled Action to action_fetch_delivery_orders -->
+    <!-- Scheduled Action to create today's route planing records -->
     <record id="ir_cron_action_fetch_delivery_orders" model="ir.cron">
-      <field name="name">Fetch Delivery Orders</field>
+      <field name="name">Fetch Today Delivery Orders</field>
       <field name="model_id" ref="model_route_planing"/>
       <field name="state">code</field>
-      <field name="code">model.action_fetch_delivery_orders()</field>
+      <field name="code">model.action_fetch_delivery_orders_today()</field>
       <field name="interval_number">2</field>
       <field name="interval_type">minutes</field>
       <field name="active">True</field>
