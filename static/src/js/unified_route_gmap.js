@@ -56,7 +56,7 @@ export class UnifiedRouteMapView extends Component {
                             "delivery_date","planned_date_begin","delivery_address"
                         ]
                     ]),
-                    this.orm.call("traktop", "search_read", [
+                    this.orm.call("route.planing", "search_read", [
                         [],[
                             "id","partner_latitude","partner_longitude",
                             "display_name","driver_name","step_type",
@@ -226,7 +226,7 @@ export class UnifiedRouteMapView extends Component {
         }
 
         // show the correct Optimize button
-        this.orm.call("traktop", "is_admin", []).then(isAdmin => {
+        this.orm.call("route.planing", "is_admin", []).then(isAdmin => {
             if (isAdmin) {
                 let btn = null;
                 if (mode === "delivery") {
@@ -235,7 +235,7 @@ export class UnifiedRouteMapView extends Component {
                     btn.onclick = async () => {
                         try {
                             const action = await this.orm.call(
-                                "traktop",
+                                "route.planing",
                                 "get_optimized_rec_created",
                                 []
                             );
@@ -472,7 +472,7 @@ export class UnifiedRouteMapView extends Component {
     async _getGMapAPIKey(){
         if(!this._gmapApiKey){
             this._gmapApiKey = await this.orm.call(
-                "traktop", "get_google_map_api_key", []
+                "route.planing", "get_google_map_api_key", []
             );
         }
         return this._gmapApiKey;

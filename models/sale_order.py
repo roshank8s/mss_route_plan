@@ -27,11 +27,11 @@ class SaleOrder(models.Model):
                 lambda p: p.picking_type_id.code == 'outgoing' and p.state == 'assigned'
             )
             for picking in pickings:
-                existing = self.env['traktop'].search(
+                existing = self.env['route.planing'].search(
                     [('delivery_order_id', '=', picking.id)], limit=1
                 )
                 if not existing:
-                    self.env['traktop'].create({
+                    self.env['route.planing'].create({
                         'delivery_order_id':  picking.id,
                         'partner_id':          order.partner_shipping_id.id,
                         'delivery_address':    order.partner_shipping_id.contact_address,
@@ -51,11 +51,11 @@ class SaleOrder(models.Model):
                     lambda p: p.picking_type_id.code == 'outgoing' and p.state == 'assigned'
                 )
                 for picking in pickings:
-                    existing = self.env['traktop'].search(
+                    existing = self.env['route.planing'].search(
                         [('delivery_order_id', '=', picking.id)], limit=1
                     )
                     if not existing:
-                        self.env['traktop'].create({
+                        self.env['route.planing'].create({
                             'delivery_order_id':  picking.id,
                             'partner_id':          order.partner_shipping_id.id,
                             'delivery_address':    order.partner_shipping_id.contact_address,

@@ -2,8 +2,8 @@
 <odoo>
     
     <record id="view_traktop_list_report" model="ir.ui.view">
-        <field name="name">traktop.list.report</field>
-        <field name="model">traktop</field>
+        <field name="name">route.planing.list.report</field>
+        <field name="model">route.planing</field>
         <field name="arch" type="xml">
 
           <list js_class="group_sortable_list" editable="bottom" create="false" delete="1" multi_edit="1" class="delivery-orders">
@@ -39,8 +39,8 @@
     </record>
 
     <record id="view_traktop_pivot_report" model="ir.ui.view">
-        <field name="name">traktop.pivot.report</field>
-        <field name="model">traktop</field>
+        <field name="name">route.planing.pivot.report</field>
+        <field name="model">route.planing</field>
         <field name="arch" type="xml">
             <pivot string="Delivery Order Analysis">
                 <field name="vehicle_id" type="row"/>
@@ -51,7 +51,7 @@
     
     <record id="action_report_delivery" model="ir.actions.act_window">
         <field name="name">Delivery Order Analysis</field>
-        <field name="res_model">traktop</field>
+        <field name="res_model">route.planing</field>
         <field name="view_mode">graph,list,pivot</field>
         <field name="view_ids" eval="[
             (5, 0, 0),
