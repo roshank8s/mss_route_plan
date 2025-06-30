@@ -362,6 +362,10 @@ class RoutePlaning(models.Model):
         vroom_url = "https://optimize.trakop.com/"
         vehicles = self.fetch_vehicle_data()
         jobs = self.fetch_jobs_data()
+
+        if not jobs:
+            _logger.info("No delivery jobs found for today; skipping VROOM call")
+            return {"routes": [], "unassigned": []}
         
         # Ensure delivery_date is properly serialized if present
         for job in jobs:
@@ -641,6 +645,20 @@ class RoutePlaning(models.Model):
             job_payload = self.fetch_jobs_data()
             _logger.info("VROOM → sending payload with %d vehicles & %d jobs",
                          len(vehicles), len(job_payload))
+
+            if not job_payload:
+                _logger.info("No delivery jobs found for today; nothing to optimize")
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": _("No Deliveries"),
+                        "message": _("No delivery jobs are scheduled for today."),
+                        "type": "warning",
+                        "sticky": False,
+                    },
+                }
+
             optimized = self.integrate_vroom()
             if optimized.get("rate_limited"):
                 return {
