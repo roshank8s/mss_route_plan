@@ -1,0 +1,65 @@
+<!-- views/user_register_wizard_view.xml -->
+<odoo>
+    <record id="view_user_register_wizard" model="ir.ui.view">
+        <field name="name">user.register.wizard.form</field>
+        <field name="model">user.register.wizard</field>
+        <field name="arch" type="xml">
+            <form string="User Registration Wizard">
+                <group string="User Information">
+                    <field name="name" required="1"/>
+                    <field name="email" required="1"/>
+                    <field name="phone" required="1"/>
+                </group>
+                <group string="Company Information">
+                    <field name="company_name" required="1"/>
+                    <field name="country_id" required="1"/>
+                </group>
+                <group string="Business Details">
+                    <field name="employee_count" required="1"/>
+                    <field name="customer_type" required="1"/>
+                    <field name="business_type" required="1"/>
+                    <field name="delivery_method" required="1"/>
+                    <field name="annual_turnover"/>
+                </group>
+                <footer>
+                    <button string="Activate" type="object" name="action_register" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+    
+                <!-- Hidden Actual Fields -->
+                <field name="actual_name" invisible="1"/>
+                <field name="actual_email" invisible="1"/>
+                <field name="actual_phone" invisible="1"/>
+                <field name="actual_company_name" invisible="1"/>
+                <field name="actual_country" invisible="1"/>
+            </form>
+        </field>
+    </record>
+    
+    <record id="view_api_limit_popup" model="ir.ui.view">
+        <field name="name">api.limit.popup.form</field>
+        <field name="model">api.limit.popup</field>
+        <field name="arch" type="xml">
+            <form string="API Limit Reached">
+                <group>
+                    <div style="font-size:14px; margin-bottom:-17px">
+                        <p><strong>Your free API quota has been exhausted.</strong></p>
+                        <p>For uninterrupted access to route optimization, please contact our team.</p>
+                    </div>
+                </group>
+                <footer>
+                    <button string="Contact Us" type="object" name="action_contact" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_user_register_wizard" model="ir.actions.act_window">
+        <field name="name">Activate Plugin</field>
+        <field name="res_model">user.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field> 
+      </record>
+  </odoo>
+  

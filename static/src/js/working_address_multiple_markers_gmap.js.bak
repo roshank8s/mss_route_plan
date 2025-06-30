@@ -1,0 +1,361 @@
+// File: address_multiple_markers_gmap.js
+import { Component, useRef, onWillStart, onMounted } from "@odoo/owl";
+import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
+import { useService } from "@web/core/utils/hooks";
+import { loadJS } from "@web/core/assets";
+
+export class AddressMultipleMarkersGmap extends Component {
+    static template = "web.AddressMultipleMarkersGmap";
+    static props = {};
+
+    setup() {
+        this.orm = useService("orm");
+        this.notification = useService("notification");
+        this._gmapApiKey = false;
+        this.mapref = useRef("googleMap");
+        this.recordList = useRef("recordList");
+
+        // to offset overlapping markers
+        const markerPositions = {};
+        let _lastHue = Math.random() * 360;
+
+        // convenience for adding a marker + info window
+        const addMarker = (position, title, address, label = null, icon = null) => {
+            const key = `${position.lat.toFixed(6)},${position.lng.toFixed(6)}`;
+            if (markerPositions[key] === undefined) {
+                markerPositions[key] = 0;
+            } else {
+                markerPositions[key]++;
+                const offset = markerPositions[key] * 0.0001;
+                position = { lat: position.lat + offset, lng: position.lng + offset };
+            }
+
+            let html = `<div><strong>${title || ""}</strong>`;
+            if (address) {
+                html += `<br/>${address}`;
+            }
+            html += `</div>`;
+            
+            const opts = { position, map: this.map, title, icon };
+            if (label) {
+                opts.label = {
+                    text: label,
+                    color: "white",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                };
+            }
+            const marker = new google.maps.Marker(opts);
+            const iw = new google.maps.InfoWindow({ content: html });
+            marker.addListener("click", () => iw.open(this.map, marker));
+            marker.infoWindow = iw;
+            return marker;
+        };
+
+        function getRandomColor() {
+            _lastHue = (_lastHue + 137.508) % 360;
+            // round to one decimal if you like, or drop to use full precision
+            const hue = Math.round(_lastHue * 10) / 10;
+            return `hsl(${hue}, 65%, 50%)`;
+        }
+
+
+        onWillStart(async () => {
+            const key = await this._getGMapAPIKey();
+            if (!key) {
+                this.notification.add(
+                    _t("Google Map API Key not configured. Please setup in Settings."),
+                    { title: _t("API Key Missing"), type: "danger", sticky: true }
+                );
+            }
+            await loadJS(`https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places,maps async`);
+        });
+
+        onMounted(async () => {
+            // initialize the map
+            this.map = new google.maps.Map(this.mapref.el, {
+                center: { lat: 0, lng: 0 },
+                zoom: 2,
+            });
+
+            const icons = {
+                start: {
+                    url: "/mss_route_optimization/static/description/Start.png",
+                    scaledSize: new google.maps.Size(50, 50),
+                },
+                job: {
+                    url: "/mss_route_optimization/static/description/pinblue.png",
+                    scaledSize: new google.maps.Size(50, 50),
+                },
+                end: {
+                    url: "/mss_route_optimization/static/description/End.png",
+                    scaledSize: new google.maps.Size(50, 50),
+                },
+            };
+
+            // clear the sidebar
+            this.recordList.el.innerHTML = "";
+
+            try {
+                // pull driver_name and vehicle_id M2O
+                const records = await this.orm.call("traktop", "search_read", [
+                    [], [
+                        "id",
+                        "partner_latitude", "partner_longitude",
+                        "display_name", "delivery_address",
+                        "driver_name",              // we want the driver
+                        "vehicle_id",               // this gives [id, name]
+                        "route_sequence", "step_type",
+                    ],
+                ]);
+
+                // group all records by the actual vehicle_id
+                const byVehicle = {};
+                for (const r of records) {
+                    if (!r.vehicle_id || !r.vehicle_id[0]) {
+                        continue; // skip unassigned
+                    }
+                    const vid = r.vehicle_id[0];
+                    if (!byVehicle[vid]) {
+                        // build label from driver_name + the m2o vehicle name
+                        const m2oPlate = r.vehicle_id[1] || "";
+                        const label   = [r.driver_name, m2oPlate].filter(Boolean).join(" / ");
+                        byVehicle[vid] = { label, recs: [] };
+                    }
+                    byVehicle[vid].recs.push(r);
+                }
+
+                // for each vehicle bucket
+                for (const [vid, { label: vehLabel, recs }] of Object.entries(byVehicle)) {
+                    // sort by whatever sequence you still have
+                    recs.sort((a, b) => a.route_sequence - b.route_sequence);
+
+                    // split out start/end/jobs (if present)
+                    const startRec = recs.find(r => r.step_type === "start");
+                    const endRec   = recs.find(r => r.step_type === "end");
+                    const jobs     = recs.filter(r => r.step_type === "job");
+
+                    // we only skip when there are zero jobs
+                    if (!jobs.length) {
+                        console.warn(`Vehicle "${vehLabel}" has no jobs, skipping.`);
+                        continue;
+                    }
+
+                    const bounds = new google.maps.LatLngBounds();
+                    const color  = getRandomColor();
+
+                    // sidebar header
+                    const hdr = document.createElement("li");
+                    hdr.textContent = vehLabel;
+                    Object.assign(hdr.style, {
+                        fontWeight: "bold",
+                        color,
+                        cursor: "pointer",
+                        margin: "10px 0 5px",
+                        listStyle: "none",
+                    });
+                    const arrow = document.createElement("span");
+                    arrow.textContent = " ▼";
+                    hdr.appendChild(arrow);
+
+                    const detailUl = document.createElement("ul");
+                    Object.assign(detailUl.style, {
+                        listStyle: "none",
+                        paddingLeft: "15px",
+                        display: "none",
+                    });
+
+                    hdr.addEventListener("click", () => {
+                        const show = detailUl.style.display === "none";
+                        detailUl.style.display = show ? "block" : "none";
+                        arrow.textContent = show ? " ▲" : " ▼";
+                        this.map.fitBounds(bounds);
+                    });
+
+                    this.recordList.el.appendChild(hdr);
+                    this.recordList.el.appendChild(detailUl);
+
+                    // optional start marker
+                    if (startRec) {
+                        const lat = +startRec.partner_latitude;
+                        const lng = +startRec.partner_longitude;
+                        bounds.extend({ lat, lng });
+                        addMarker(
+                            { lat, lng },
+                            `Start ${vehLabel}`,
+                            startRec.delivery_address,
+                            null,
+                            icons.start
+                        );
+                    }
+
+                    // optional end marker
+                    if (endRec) {
+                        const lat = +endRec.partner_latitude;
+                        const lng = +endRec.partner_longitude;
+                        bounds.extend({ lat, lng });
+                        addMarker(
+                            { lat, lng },
+                            `End ${vehLabel}`,
+                            endRec.delivery_address,
+                            null,
+                            icons.end
+                        );
+                    }
+
+                    // always plot the job pins
+                    let counter = 1;
+                    for (const job of jobs) {
+                        const lat = +job.partner_latitude;
+                        const lng = +job.partner_longitude;
+                        bounds.extend({ lat, lng });
+
+                        const m = addMarker(
+                            { lat, lng },
+                            job.display_name,
+                            job.delivery_address,
+                            String(counter),
+                            icons.job
+                        );
+
+                        // add to sidebar
+                        const li = document.createElement("li");
+                        Object.assign(li.style, {
+                            cursor: "pointer",
+                            marginBottom: "10px",
+                            listStyle: "none",
+                        });
+                        const tdiv = document.createElement("div");
+                        tdiv.textContent = job.display_name;
+                        tdiv.style.fontWeight = "bold";
+                        const adiv = document.createElement("div");
+                        adiv.textContent = job.delivery_address;
+                        adiv.style.fontSize = "small";
+                        adiv.style.color = "#666";
+                        li.append(tdiv, adiv);
+                        li.addEventListener("click", () => {
+                            this.map.panTo({ lat, lng });
+                            this.map.setZoom(12);
+                            m.infoWindow?.open(this.map, m);
+                        });
+                        detailUl.appendChild(li);
+                        counter++;
+                    }
+
+                    // draw the polyline only if start AND end exist
+                    if (startRec && endRec) {
+                        const ds = new google.maps.DirectionsService();
+                        const dr = new google.maps.DirectionsRenderer({
+                            map: this.map,
+                            suppressMarkers: true,
+                            polylineOptions: {
+                                strokeColor: color,
+                                strokeOpacity: 0.8,
+                                strokeWeight: 4,
+                            },
+                        });
+                        const wpts = jobs.map(j => ({
+                            location: {
+                                lat: +j.partner_latitude,
+                                lng: +j.partner_longitude,
+                            },
+                            stopover: true,
+                        }));
+                        ds.route(
+                            {
+                                origin: {
+                                    lat: +startRec.partner_latitude,
+                                    lng: +startRec.partner_longitude,
+                                },
+                                destination: {
+                                    lat: +endRec.partner_latitude,
+                                    lng: +endRec.partner_longitude,
+                                },
+                                waypoints: wpts,
+                                travelMode: google.maps.TravelMode.DRIVING,
+                            },
+                            (res, status) => {
+                                if (status === google.maps.DirectionsStatus.OK) {
+                                    dr.setDirections(res);
+                                } else {
+                                    console.error("Directions failed:", status);
+                                }
+                            }
+                        );
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading routes:", err);
+                this.notification.add(_t("Failed to load route data."), {
+                    type: "danger",
+                });
+            }
+
+            // --- live partner locations (unchanged) ---
+            let userLiveMarkers = {};
+            const updateLive = async () => {
+                try {
+                    const parts = await this.orm.call("res.partner", "search_read", [
+                        [],
+                        ["live_latitude", "live_longitude", "name", "id"],
+                    ]);
+                    const liveIcon = {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: "skyblue",
+                        fillOpacity: 1,
+                        scale: 8,
+                        strokeColor: "white",
+                        strokeWeight: 2,
+                    };
+                    parts
+                        .filter(p => {
+                            const la = parseFloat(p.live_latitude);
+                            const lo = parseFloat(p.live_longitude);
+                            return !isNaN(la) && !isNaN(lo) && la !== 0 && lo !== 0;
+                        })
+                        .forEach(p => {
+                            const pos = {
+                                lat: +p.live_latitude,
+                                lng: +p.live_longitude,
+                            };
+                            if (userLiveMarkers[p.id]) {
+                                userLiveMarkers[p.id].setPosition(pos);
+                            } else {
+                                userLiveMarkers[p.id] = addMarker(
+                                    pos,
+                                    p.name,
+                                    "",
+                                    null,
+                                    liveIcon
+                                );
+                            }
+                        });
+                } catch (e) {
+                    console.error("Live update error:", e);
+                }
+            };
+            updateLive();
+            setInterval(updateLive, 5000);
+        });
+    }
+
+    async _getGMapAPIKey() {
+        if (!this._gmapApiKey) {
+            this._gmapApiKey = await this.orm.call(
+                "traktop",
+                "get_google_map_api_key",
+                []
+            );
+        }
+        return this._gmapApiKey;
+    }
+}
+
+export const addressMultipleMarkersGmap = {
+    component: AddressMultipleMarkersGmap,
+};
+registry.category("fields").add(
+    "address_multiple_markers_gmap",
+    addressMultipleMarkersGmap
+);

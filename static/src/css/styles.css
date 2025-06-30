@@ -1,0 +1,486 @@
+.map-right-view {
+  flex: 1;
+}
+
+.map-left-view {
+  width: 20%;
+  margin-right: 20px;
+}
+
+.map-left-view .dl-list-view {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map-right-view .map-cls-view {
+  height: 75vh;
+  border: 1px solid #ccc;
+}
+.map-right-view button.gm-ui-hover-effect{
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.map-right-view button.gm-ui-hover-effect span{
+  width: 20px !important;
+  height: 20px !important;
+  margin: 5px 0 !important;
+}
+
+.o_form_view .o_form_sheet_bg {
+  max-width: 2000px;
+}
+
+.o_form_view.hide-on-form .o_cp_action_menus,
+.o_form_view.hide-on-form .o_breadcrumb {
+  display: none !important;
+}
+
+.map-container {
+  position: relative;
+  height: 100vh;
+  display: flex;
+}
+
+.map-toggle-btn-pure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color:  #714B67;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  z-index: 10001;
+  transition: left 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.map-toggle-btn-pure::before {
+  content: '➜';
+  transition: transform 0.3s ease;
+  margin-top: -1px;
+}
+
+.map-toggle-btn-pure.flipped::before {
+  transform: rotate(180deg);
+}
+
+.map {
+  position: relative;
+  height: 100%;
+  z-index: 1;
+}
+/* .hidethis{
+  display: none !important;
+} */
+/* .o_list_table [data-name="partner_id"], .o_list_table [data-name="delivery_order_id"]{
+  width: 100%;
+} */
+
+/* .o_list_button.w-print-0.p-print-0{
+  width: 100%;
+} */
+/* .o_list_table [data-name="vehicle_id"], .o_list_table [data-name="vehicle_starting_point"], .o_list_table [data-name="product_summary"]{
+  display: none !important;
+} */
+/* MOBILE STYLES */
+@media (max-width: 769px) {
+  .map-container {
+    flex-direction: row;
+    overflow: hidden;
+  }
+  .map-right-view {
+    margin-top: 35px;
+  }
+
+  .map-left-view {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    z-index: 10000;
+    background-color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+  }
+
+  .map-left-view.map-panel-visible {
+    display: block !important;
+  }
+
+  .map-toggle-btn-pure {
+    left: 15px;
+  }
+
+  .map-toggle-btn-pure.flipped {
+    left: calc(70% - 16px);
+  }
+}
+
+
+/* .o_list_view.delivery-orders thead th:nth-child(4),
+.o_list_view.delivery-orders tbody td:nth-child(4) {
+    width: 250px !important; 
+    text-align: left !important;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(5),
+.o_list_view.delivery-orders tbody td:nth-child(5) {
+    width: 250px !important; 
+    text-align: left !important;
+}
+.o_list_view.delivery-orders thead th:nth-child(6),
+.o_list_view.delivery-orders tbody td:nth-child(6) {
+    width: 120px !important;
+    text-align: left !important;
+}
+.o_list_view.delivery-orders thead th:nth-child(7),
+.o_list_view.delivery-orders tbody td:nth-child(7) {
+    width: 90px !important;
+    text-align: left !important;
+} */
+
+/* delivery-orders list view column widths using nth-child() */
+
+
+
+.o_list_view.delivery-orders thead th:nth-child(3),
+.o_list_view.delivery-orders tbody td:nth-child(3) {
+    width: 140px !important; 
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(4),
+.o_list_view.delivery-orders tbody td:nth-child(4) {
+    width: 350px !important; /* delivery_address */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(5),
+.o_list_view.delivery-orders tbody td:nth-child(5) {
+    width: 200px !important; /* travel_time */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(6),
+.o_list_view.delivery-orders tbody td:nth-child(6) {
+    width: 120px !important; /* distance_km */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(7),
+.o_list_view.delivery-orders tbody td:nth-child(7) {
+    width: 150px !important; /* vehicle_id */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(8),
+.o_list_view.delivery-orders tbody td:nth-child(8) {
+    width: 180px !important; /* delivery_date */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(9),
+.o_list_view.delivery-orders tbody td:nth-child(9) {
+    width: 170px !important; /* manual_vehicle_override */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders thead th:nth-child(10),
+.o_list_view.delivery-orders tbody td:nth-child(10) {
+    width: 200px !important; /* driver_name */
+    text-align: left;
+}
+
+.o_list_view.delivery-orders .o_list_renderer .o_list_table thead .o_list_number_th {
+    text-align: left !important;
+}
+
+.o_list_view.delivery-orders .o_list_renderer .o_list_table tbody > tr > td:not(.o_list_record_selector).o_list_number{
+    text-align: left !important;
+}
+
+
+@media only screen and (max-width: 768px) {
+
+  .o_list_view.delivery-orders .o_data_row {
+    display: flex !important;
+    flex-direction: column !important;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    padding: 16px;
+    margin: 10px ;
+    border: 0px solid #e0e0e0;
+    width: 945%; 
+  }
+
+    .o_list_view.delivery-orders .o_list_record_selector {
+      display: none !important;
+    }
+  
+  /* .o_list_view.delivery-orders .o_list_record_selector input[type="checkbox"] {
+    transform: scale(1.4);
+    cursor: pointer;
+  } */
+  .o_list_view.delivery-orders .o_data_row .o_data_cell {
+    padding: 5px !important;
+    width: 235px !important;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:last-child {
+      border-bottom: none;
+  }
+
+  .o_list_view.delivery-orders thead {
+      display: none;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(1)::before {
+      content: "Delivery Order";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(2)::before {
+      content: "Customer";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(3)::before {
+      content: "Delivery Address";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(4)::before {
+      content: "Drive Time(min)";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(5)::before {
+      content: "Distance (km)";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(6)::before {
+      content: "Vehicle";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(7)::before {
+      content: "Delivery Date";
+      font-weight: 600;
+      color: #333;
+      display: block;
+  }
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(8)::before {
+    content: "Manual Vehicle Assignment";
+    font-weight: 600;
+    color: #333;
+    display: block;
+  }
+  .o_list_view.delivery-orders .o_data_row .o_data_cell:nth-child(9)::before {
+    content: "Driver";
+    font-weight: 600;
+    color: #333;
+    display: block;
+  }
+
+  .o_list_view.delivery-orders .o_data_row .btn {
+      margin-top: 10px;
+      font-size: 14px;
+  }
+}
+
+.o_list_view.products thead th:nth-child(1),
+.o_list_view.products tbody td:nth-child(1) {
+    width: 300px !important; /* Product */
+    text-align: left !important;
+}
+
+.o_list_view.products thead th:nth-child(2),
+.o_list_view.products tbody td:nth-child(2) {
+    width: 100px !important;
+    text-align: left !important;
+}
+.o_list_view.products .o_list_number_th {
+  text-align: left !important;
+}
+
+.o_list_view.products thead th:nth-child(3),
+.o_list_view.products tbody td:nth-child(3) {
+    width: 80px !important; /* Picked */
+    text-align: left !important;
+}
+
+/* .d-none {
+  display: none !important;
+} */
+
+.compact-row,
+.vehicle_hours_row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 350px;
+    flex-wrap: nowrap;
+}
+
+.compact-field {
+    flex: 0 1 100px;
+}
+
+.to-separator {
+    white-space: nowrap;
+    padding: 0 4px;
+    font-weight: 500;
+    margin-top: -8px;
+}
+/* .o_vehicle_info_custom .o_field_widget{
+  width: 30% !important;
+} */
+.o_vehicle_skills {
+  width: 30% !important;
+}
+.o_vehicle_type {
+  width: 30% !important;
+}
+.o_vehicle_speed_factor{
+  width: 30% !important;
+}
+.o_vehicle_max_tasks  {
+  width: 30% !important;
+}
+.label {
+  font-weight: 600;
+}
+
+.custom-usage-banner {
+  background-color: #f1f1f1;
+  margin-top: 8px;
+  /* margin-bottom: 3px; */
+  border: 1px solid #ccc;
+  border-left: 5px solid #ccc;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.o_route_banner {
+  margin-bottom: 12px;
+  background-color: #e0f7fa;
+  padding: 10px;
+  font-weight: bold;
+  border-left: 4px solid #0288d1;
+}
+
+
+
+/* map view */
+
+/* ---- Main Filter Bar Container ---- */
+.o_map_search_bar {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Adds space between each element in the bar */
+  padding: 8px 12px;
+  background-color: #f8f9fa; /* A light, standard Odoo background color */
+  border-bottom: 1px solid #dee2e6; /* A subtle separator line */
+  justify-content: center;
+}
+
+/* ---- Elements within the Filter Bar ---- */
+.o_map_search_bar .form-select,
+.o_map_search_bar .form-control {
+  /* Prevent inputs from becoming too wide on large screens */
+  max-width: 250px;
+  height: 35px;
+  flex-grow: 1; /* Allow them to take available space */
+  border: var(--border-width) solid #d8dadd;
+}
+
+/* ---- Buttons Styling with Icons ---- */
+.o_map_search_bar .btn-secondary {
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  white-space: nowrap; /* Keep text and icon on one line */
+  height: 35px;
+  border: var(--border-width) solid #d8dadd;
+  color: white;
+  background-color: #714B67;
+}
+.o_map_search_bar .btn-light {
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  white-space: nowrap; /* Keep text and icon on one line */
+  height: 35px;
+  border: var(--border-width) solid #d8dadd;
+  background-color: #e5e4e4;
+}
+/* Add a filter icon to the "Filter by Date" button */
+.o_map_search_bar .btn-secondary::before {
+  font-family: "FontAwesome";
+  content: "\f0b0"; /* fa-filter icon */
+  margin-right: 6px;
+  font-weight: 900;
+  color: white; /* Ensure the icon is visible */
+}
+
+/* Add a clear icon to the "Clear All" button */
+.o_map_search_bar .btn-light::before {
+  font-family: "FontAwesome";
+  content: "\f00d"; /* fa-times (X) icon */
+  margin-right: 6px;
+  font-weight: 900;
+}
+
+/* ---- Styling the Date Input Placeholder ---- */
+/* Style the native "dd/mm/yyyy" placeholder to be less prominent */
+.o_map_search_bar input[type="date"]:invalid::-webkit-datetime-edit {
+  color: #999;
+}
+.o_map_search_bar input[type="date"] {
+  /* If you want to force a custom placeholder, you'd need more complex JS.
+     This styling is a good compromise for native appearance. */
+  color: #495057; /* Standard text color when a date is selected */
+}
+
+/*
+========================================
+  MOBILE RESPONSIVE STYLES
+========================================
+*/
+
+/* This media query targets screens smaller than 768px (most phones) */
+@media (max-width: 767px) {
+    
+  /* 1. Switch the filter bar to a vertical layout */
+  .o_map_search_bar {
+      flex-direction: column; /* Stack items vertically */
+      align-items: stretch;   /* Make items stretch to full width */
+  }
+
+  /* 2. Remove the max-width limit on inputs for mobile */
+  .o_map_search_bar .form-select,
+  .o_map_search_bar .form-control {
+      max-width: none;
+  }
+}
