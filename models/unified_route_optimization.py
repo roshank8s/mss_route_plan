@@ -44,7 +44,7 @@ class UnifiedRouteStep(models.Model):
 
 class UnifiedRouteOptimizer(models.TransientModel):
     _name = 'unified.route.optimizer'
-    _description = 'Run unified route optimization'
+    _description = 'Run unified route planing'
 
 
     def _build_vehicle_data(self):
@@ -413,7 +413,7 @@ class UnifiedRouteOptimizer(models.TransientModel):
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Success'),
-                    'message': _('Unified route optimization complete.'),
+                    'message': _('Unified route planing complete.'),
                     'type': 'success',
                     'sticky': False,
                     'next': {'type': 'ir.actions.client', 'tag': 'reload'},

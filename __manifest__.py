@@ -7,9 +7,9 @@
     'version': '1.0',
     'category': '',
     'sequence': 200,
-    'summary': 'Route optimization in Odoo refers to enhancing the delivery and logistics process by minimizing travel distances, time, and costs                          .',
+    'summary': 'Route planing in Odoo refers to enhancing the delivery and logistics process by minimizing travel distances, time, and costs                          .',
     'description': """
-Route optimization in Odoo refers to enhancing the delivery and logistics process by minimizing travel distances, time, and costs associated with managing deliveries or transportation. This feature is critical for businesses with delivery fleets or field services, as it improves efficiency and reduces operational expenses.
+Route planing in Odoo refers to enhancing the delivery and logistics process by minimizing travel distances, time, and costs associated with managing deliveries or transportation. This feature is critical for businesses with delivery fleets or field services, as it improves efficiency and reduces operational expenses.
 """,
     'live_test_url': 'https://localhost:8069/live_preview',
     'author': 'Master Software Solutions',
