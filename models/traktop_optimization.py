@@ -357,7 +357,11 @@ class RoutePlaning(models.Model):
         import pytz
         from datetime import datetime, time as dt_time
 
-        vehicles = self.env['fleet.vehicle'].sudo().search([])
+        today = fields.Date.context_today(self)
+        weekday = today.strftime('%A').lower()
+        vehicles = self.env['fleet.vehicle'].sudo().search([
+            ('delivery_days.name', '=', weekday)
+        ])
         vehicle_data = []
 
         # Determine the user’s timezone (fallback to UTC)
