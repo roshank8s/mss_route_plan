@@ -9,4 +9,6 @@ This module adds route planning tools to help your delivery or field service tea
 
 After installation, configure your vehicles and addresses, then plan routes from sales orders or partner records.
 
+Each vehicle can be assigned one or more **Delivery Days** under the Fleet settings. The route planner will only use vehicles whose `delivery_days` include the current weekday when building optimization data.
+
 For general information about managing modules, see the [Odoo documentation](https://www.odoo.com/documentation/latest/).
