@@ -223,7 +223,7 @@ class RoutePlaning(models.Model):
             'res_model': 'fleet.vehicle',
             'view_mode': 'pivot,tree',
             'views': [(pivot_id, 'pivot'), (list_id, 'tree')],
-            'domain': [('delivery_days.name', '=', weekday)],
+            'domain': [('is_scheduled_today', '=', True)],
         }
  ################################################################################
 
