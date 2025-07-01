@@ -1,4 +1,5 @@
 <odoo>
+    <!-- Inherited Vehicle Form View with Custom Fields -->
     <record id="fleet_vehicle_form_inherit_vehicle_info" model="ir.ui.view">
         <field name="name">fleet.vehicle.form.inherit.vehicle.info</field>
         <field name="model">fleet.vehicle</field>
@@ -35,6 +36,7 @@
                             </div>
                         </div>
 
+                        <!-- Breaks -->
                         <field name="time_window_display"/>
                         <label for="break_start" string="Breaks"/>
                         <div class="vehicle_hours_row">
@@ -46,8 +48,11 @@
                                 <field name="break_end" nolabel="1" widget="timepicker"/>
                             </div>
                         </div>
+
+                        <!-- Speed, Tasks, Travel Time, Distance -->
                         <field name="speed_factor" class="o_vehicle_speed_factor"/>
                         <field name="max_tasks" class="o_vehicle_max_tasks"/>
+                        
                         <label for="max_travel_time" string="Max Travel Time"/>
                         <div class="vehicle_hours_row">
                             <div class="compact-field">
@@ -55,21 +60,22 @@
                             </div>
                             <div class="to-separator">seconds</div>
                         </div>
+
                         <label for="max_distance" string="Max Distance"/>
                         <div class="vehicle_hours_row">
                             <div class="compact-field">
                                 <field name="max_distance" nolabel="1"/>
                             </div>
                             <div class="to-separator">meters</div>
-                        </div>                        
+                        </div>
                     </group>
                 </page>
             </xpath>
         </field>
     </record>
 
-    <!-- Pivot view for vehicles scheduled today -->
-    <record id="fleet_vehicle_today_tree" model="ir.ui.view">
+    <!-- Pivot View for Vehicles Scheduled Today -->
+    <record id="fleet_vehicle_today_pivot" model="ir.ui.view">
         <field name="name">fleet.vehicle.today.pivot</field>
         <field name="model">fleet.vehicle</field>
         <field name="arch" type="xml">
@@ -80,13 +86,17 @@
         </field>
     </record>
 
-    <!-- Action to open the pivot view filtered for today's schedule -->
-    <record id="action_fleet_vehicle_today" model="ir.actions.act_window">
-        <field name="name">Vehicles Scheduled Today</field>
+    <!-- Action to Open the Pivot View -->
+    <record id="action_fleet_vehicle_today_pivot" model="ir.actions.act_window">
+        <field name="name">Vehicles Scheduled Today (Pivot)</field>
         <field name="res_model">fleet.vehicle</field>
         <field name="view_mode">pivot</field>
-    <!-- List view for vehicles scheduled today -->
-    <record id="fleet_vehicle_today_tree" model="ir.ui.view">
+        <field name="view_id" ref="fleet_vehicle_today_pivot"/>
+        <field name="domain">[("is_scheduled_today", "=", True)]</field>
+    </record>
+
+    <!-- List View for Vehicles Scheduled Today -->
+    <record id="fleet_vehicle_today_list" model="ir.ui.view">
         <field name="name">fleet.vehicle.today.list</field>
         <field name="model">fleet.vehicle</field>
         <field name="arch" type="xml">
@@ -99,19 +109,19 @@
         </field>
     </record>
 
-    <!-- Action to open the list view filtered for today's schedule -->
-    <record id="action_fleet_vehicle_today" model="ir.actions.act_window">
+    <!-- Action to Open the List View -->
+    <record id="action_fleet_vehicle_today_list" model="ir.actions.act_window">
         <field name="name">Vehicles Scheduled Today</field>
         <field name="res_model">fleet.vehicle</field>
         <field name="view_mode">list,form</field>
-        <field name="view_id" ref="fleet_vehicle_today_tree"/>
+        <field name="view_id" ref="fleet_vehicle_today_list"/>
         <field name="domain">[("is_scheduled_today", "=", True)]</field>
     </record>
 
-    <!-- Menu item under Route Planing -->
+    <!-- Menu Item Under Route Planning -->
     <menuitem id="menu_fleet_vehicle_today"
               name="Today's Vehicles"
               parent="traktop_main_menu"
-              action="action_fleet_vehicle_today"
+              action="action_fleet_vehicle_today_list"
               sequence="25"/>
 </odoo>
