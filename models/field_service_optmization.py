@@ -598,6 +598,20 @@ class FleetVehicle(models.Model):
     max_distance = fields.Float(string="Max Distance (Km)",
                                 help="Max total travel distance in kilometers for this vehicle")
 
+    is_scheduled_today = fields.Boolean(
+        string="Scheduled Today",
+        compute="_compute_is_scheduled_today",
+        store=True,
+    )
+
+    @api.depends('delivery_days')
+    def _compute_is_scheduled_today(self):
+        today = fields.Date.context_today(self).strftime('%A').lower()
+        for vehicle in self:
+            vehicle.is_scheduled_today = any(
+                day.name.lower() == today for day in vehicle.delivery_days
+            )
+
     @api.constrains('cost_value', 'cost_type')
     def _check_cost_value(self):
         for record in self:
