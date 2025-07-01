@@ -24,6 +24,7 @@ Route planing in Odoo refers to enhancing the delivery and logistics process by 
         'views/res_partner_gmap.xml',
         'views/res_config_settings_view.xml',
         'views/fleet.xml',
+        'views/fleet_action.xml',
         'security/traktop_record_rules.xml',
         'views/user_registration.xml',
         'views/reporting_view.xml',
