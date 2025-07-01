@@ -48,6 +48,33 @@
             </pivot>
         </field>
     </record>
+
+    <!-- Pivot view for vehicles -->
+    <record id="view_fleet_vehicle_pivot" model="ir.ui.view">
+        <field name="name">fleet.vehicle.pivot.report</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="arch" type="xml">
+            <pivot string="Vehicles">
+                <field name="name" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Tree view for unassigned orders -->
+    <record id="view_unassigned_orders_tree" model="ir.ui.view">
+        <field name="name">route.planing.unassigned.tree</field>
+        <field name="model">route.planing</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="delivery_order_id" widget="many2one_button"/>
+                <field name="partner_id"/>
+                <field name="delivery_address"/>
+                <field name="vehicle_id"/>
+                <field name="delivery_date"/>
+                <button name="action_assign_vehicle" type="object" string="Assign" class="oe_highlight"/>
+            </tree>
+        </field>
+    </record>
     
     <record id="action_report_delivery" model="ir.actions.act_window">
         <field name="name">Delivery Order Analysis</field>
@@ -79,6 +106,20 @@
             </p>
         </field>
     </record>
+
+    <!-- Server action to open vehicle report -->
+    <record id="action_vehicle_report" model="ir.actions.server">
+        <field name="name">Vehicle Report</field>
+        <field name="model_id" ref="model_route_planing"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_fleet_vehicle_report()</field>
+    </record>
+
+    <menuitem id="menu_report_vehicle"
+              name="Vehicle Report"
+              parent="menu_report"
+              action="action_vehicle_report"
+              sequence="3"/>
 
     <menuitem id="menu_report" 
             name="Reporting" 
