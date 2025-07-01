@@ -242,6 +242,11 @@
       <field name="view_id" ref="view_field_service_custom_list"/>
     </record>
 
+    <record id="action_vehicle_assignment" model="ir.actions.client">
+      <field name="name">Vehicle Assignment</field>
+      <field name="tag">vehicle_assignment</field>
+    </record>
+
     <!-- =================================================================== -->
     <!-- Menu Items -->
     <!-- =================================================================== -->
@@ -257,11 +262,17 @@
         parent="traktop_main_menu" 
         sequence="10"/>
 
-    <menuitem id="menu_field_services" 
-        name="Field Services" 
-        action="action_field_services" 
-        parent="traktop_main_menu" 
+    <menuitem id="menu_field_services"
+        name="Field Services"
+        action="action_field_services"
+        parent="traktop_main_menu"
         sequence="20"/>
+
+    <menuitem id="menu_vehicle_assignment"
+        name="Vehicle Assignment"
+        action="action_vehicle_assignment"
+        parent="traktop_main_menu"
+        sequence="25"/>
 
     <!-- This is the parent menu for all map views -->
     <menuitem id="menu_maps_parent" 

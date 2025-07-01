@@ -1,0 +1,8 @@
+<templates xml:space="preserve">
+    <t t-name="mss_route_plan.VehicleAssignment" owl="1">
+        <div class="o_vehicle_assignment">
+            <div t-ref="pivotContainer" class="o_vehicle_pivot mb-3" style="height:300px;"/>
+            <ul t-ref="listContainer" class="list-group"/>
+        </div>
+    </t>
+</templates>

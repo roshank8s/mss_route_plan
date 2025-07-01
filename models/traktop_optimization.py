@@ -511,6 +511,18 @@ class RoutePlaning(models.Model):
         if 'vehicle_id' in vals and not self.env.context.get('from_optimization', False):
             vals['manual_vehicle_override'] = True
         return super(RoutePlaning, self).write(vals)
+
+    def assign_to_vehicle(self, vehicle_id):
+        """Assign this record to the given vehicle."""
+        self.ensure_one()
+        vehicle = self.env['fleet.vehicle'].browse(vehicle_id)
+        if not vehicle:
+            raise UserError(_('Invalid vehicle.'))
+        self.sudo().write({
+            'vehicle_id': vehicle.id,
+            'manual_vehicle_override': True,
+        })
+        return True
     
 ######################################################################################
     @api.model
