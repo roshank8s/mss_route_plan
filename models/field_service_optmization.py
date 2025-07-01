@@ -618,6 +618,15 @@ class FleetVehicle(models.Model):
             if record.cost_type and not record.cost_value:
                 raise ValidationError(_("Please provide a cost value for the selected cost type."))
 
+    def action_open_unassigned_orders(self):
+        """Open today's unassigned orders and pass the vehicle id in context."""
+        self.ensure_one()
+        action = self.env.ref('mss_route_plan.action_unassigned_orders_today').sudo().read()[0]
+        action['domain'] = [('vehicle_id', '=', False),
+                            ('delivery_date', '=', fields.Date.context_today(self))]
+        action['context'] = {'active_id': self.id}
+        return action
+
 
 class ApiLimitPopup(models.TransientModel):
     _name = 'api.limit.popup'

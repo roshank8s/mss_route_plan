@@ -66,5 +66,20 @@
                 </page>
             </xpath>
         </field>
+</record>
+
+    <record id="fleet_vehicle_form_unassigned_button" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.unassigned.button</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_fleet_open_unassigned)d"
+                        type="action"
+                        class="oe_stat_button"
+                        string="Unassigned Orders"
+                        icon="fa-list"/>
+            </xpath>
+        </field>
     </record>
 </odoo>
