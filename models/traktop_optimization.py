@@ -1248,6 +1248,13 @@ class FleetVehicle(models.Model):
         'vehicle_id', 'day_id',
         string='Delivery Days'
     )
+
+    is_scheduled_today = fields.Boolean(
+        string="Scheduled Today",
+        compute="_compute_is_scheduled_today",
+        store=False,
+        help="Indicates whether the vehicle is scheduled to operate today",
+    )
     address = fields.Char(string="Address")
     longitude = fields.Char(string="Longitude")
     latitude = fields.Char(string="Latitude")
@@ -1328,6 +1335,16 @@ class FleetVehicle(models.Model):
         for record in self:
             if record.max_distance:
                 record.max_distance = record.max_distance * 1000  # Convert kilometers to meters
+
+    @api.depends('delivery_days')
+    def _compute_is_scheduled_today(self):
+        """Determine if the vehicle is scheduled for today's weekday."""
+        today = fields.Date.today()
+        weekday = today.strftime('%A').lower()
+        for vehicle in self:
+            vehicle.is_scheduled_today = any(
+                day.name == weekday for day in vehicle.delivery_days
+            )
 
 
     @api.depends('working_hours_start', 'working_hours_end')
