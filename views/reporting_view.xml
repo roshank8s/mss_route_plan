@@ -65,11 +65,11 @@
         <field name="name">fleet.vehicle.tree.report</field>
         <field name="model">fleet.vehicle</field>
         <field name="arch" type="xml">
-            <tree string="Vehicles">
+            <list string="Vehicles">
                 <field name="name"/>
                 <field name="driver_id"/>
                 <field name="delivery_days" widget="many2many_tags"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -78,14 +78,14 @@
         <field name="name">route.planing.unassigned.tree</field>
         <field name="model">route.planing</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="delivery_order_id" widget="many2one_button"/>
                 <field name="partner_id"/>
                 <field name="delivery_address"/>
                 <field name="vehicle_id"/>
                 <field name="delivery_date"/>
                 <button name="action_assign_vehicle" type="object" string="Assign" class="oe_highlight"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -93,7 +93,7 @@
     <record id="action_unassigned_orders_today" model="ir.actions.act_window">
         <field name="name">Today's Unassigned Orders</field>
         <field name="res_model">route.planing</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">list</field>
         <field name="view_id" ref="view_unassigned_orders_tree"/>
         <field name="domain">['&amp;',('delivery_date','=',context_today()),('vehicle_id','=',False)]</field>
     </record>
