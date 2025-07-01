@@ -48,6 +48,7 @@ class RoutePlaning(models.Model):
     # distance = fields.Float(string="Distance (km)")
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle")
     vehicle_name = fields.Char(string="Vehicle Name")
+    driver_id = fields.Many2one('res.partner', string="Driver")
     display_name = fields.Char(string="Display Name", compute="_compute_display_name")
     vehicle_starting_point = fields.Char(string="Starting Point", compute="_compute_vehicle_address")
     driver_name = fields.Char(string="Driver", compute="_compute_driver_name", store=True)
@@ -150,10 +151,15 @@ class RoutePlaning(models.Model):
             'target': 'current',
         }
     
-    @api.depends('vehicle_id')
+    @api.depends('driver_id', 'vehicle_id')
     def _compute_driver_name(self):
         for record in self:
-            record.driver_name = record.vehicle_id.driver_id.name if record.vehicle_id.driver_id else ''
+            if record.driver_id:
+                record.driver_name = record.driver_id.name
+            elif record.vehicle_id.driver_id:
+                record.driver_name = record.vehicle_id.driver_id.name
+            else:
+                record.driver_name = ''
     
     @api.depends('vehicle_id')
     def _compute_vehicle_address(self):
@@ -209,6 +215,12 @@ class RoutePlaning(models.Model):
         if vehicle:
             for rec in self:
                 rec.write({'vehicle_id': vehicle.id, 'manual_vehicle_override': True})
+                rec.write({
+                    'vehicle_id': vehicle.id,
+                    'driver_id': vehicle.driver_id.id,
+                    'manual_vehicle_override': True
+                })
+
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
@@ -217,6 +229,7 @@ class RoutePlaning(models.Model):
         weekday = fields.Date.context_today(self).strftime('%A').lower()
         pivot_id = self.env.ref('mss_route_plan.view_fleet_vehicle_pivot').id
         list_id = self.env.ref('mss_route_plan.view_unassigned_orders_tree').id
+        list_id = self.env.ref('mss_route_plan.action_unassigned_orders_today').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Vehicle Report',
@@ -224,6 +237,9 @@ class RoutePlaning(models.Model):
             'view_mode': 'pivot,tree',
             'views': [(pivot_id, 'pivot'), (list_id, 'tree')],
             'domain': [('delivery_days.name', '=', weekday)],
+
+            'domain': [('is_scheduled_today', '=', True)],
+
         }
  ################################################################################
 
