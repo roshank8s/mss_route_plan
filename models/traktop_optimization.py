@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 # trakop_optimization.py
-import pytz
-import requests
-from odoo import api, fields, models, _, _lt
-from odoo.exceptions import ValidationError, UserError
 import logging
 import json
-
-from datetime import datetime, time, timedelta
-
-from collections import defaultdict
-from datetime import datetime, timedelta
-from odoo import api, fields, models, _, _
-from odoo.exceptions import UserError
-import logging
-from datetime import datetime, date, time, timedelta, timezone
-
 import math
+from datetime import datetime, date, time, timedelta
+from collections import defaultdict
+import pytz
+import requests
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -71,7 +63,6 @@ class RoutePlaning(models.Model):
 
     # Fields for routing
     route_id = fields.Integer("Route ID")
-    route_sequence = fields.Integer("Route Sequence")
     step_type = fields.Selection(
         [('start', 'Start'), ('job', 'Job'), ('end', 'End')],
         string="Step Type"
