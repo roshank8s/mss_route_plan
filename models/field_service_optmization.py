@@ -604,6 +604,27 @@ class FleetVehicle(models.Model):
             if record.cost_type and not record.cost_value:
                 raise ValidationError(_("Please provide a cost value for the selected cost type."))
 
+    def action_view_unassigned_pickings(self):
+        """Return an action showing today's unassigned delivery orders."""
+        today = fields.Date.context_today(self)
+        start_dt = datetime.combine(today, datetime.min.time())
+        end_dt = datetime.combine(today, datetime.max.time())
+
+        domain = [
+            ('vehicle_id', '=', False),
+            ('scheduled_date', '>=', fields.Datetime.to_string(start_dt)),
+            ('scheduled_date', '<=', fields.Datetime.to_string(end_dt)),
+        ]
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Unassigned Pickings'),
+            'res_model': 'stock.picking',
+            'view_mode': 'tree,form',
+            'domain': domain,
+            'context': self.env.context,
+        }
+
 
 class ApiLimitPopup(models.TransientModel):
     _name = 'api.limit.popup'
