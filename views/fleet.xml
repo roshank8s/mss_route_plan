@@ -67,4 +67,32 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Pivot view for vehicles scheduled today -->
+    <record id="fleet_vehicle_today_tree" model="ir.ui.view">
+        <field name="name">fleet.vehicle.today.pivot</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="arch" type="xml">
+            <pivot string="Today's Vehicles">
+                <field name="driver_id" type="row"/>
+                <field name="name" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action to open the pivot view filtered for today's schedule -->
+    <record id="action_fleet_vehicle_today" model="ir.actions.act_window">
+        <field name="name">Vehicles Scheduled Today</field>
+        <field name="res_model">fleet.vehicle</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="fleet_vehicle_today_tree"/>
+        <field name="domain">[("is_scheduled_today", "=", True)]</field>
+    </record>
+
+    <!-- Menu item under Route Planing -->
+    <menuitem id="menu_fleet_vehicle_today"
+              name="Today's Vehicles"
+              parent="traktop_main_menu"
+              action="action_fleet_vehicle_today"
+              sequence="25"/>
 </odoo>
