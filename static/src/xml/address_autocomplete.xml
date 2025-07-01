@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="web.AddressAutocompleteGmap">
+
+    <t t-if="props.readonly">
+        <span t-esc="formattedValue"/>
+    </t>
+    <t t-else="">
+        <input
+                class="o_input"
+                t-att-class="{
+                    'o_field_translate': isTranslatable,
+                    'o_field_placeholder': hasDynamicPlaceholder
+                }"
+                t-att-id="props.id"
+                t-att-type="props.isPassword ? 'password' : 'text'"
+                t-att-autocomplete="props.autocomplete or (props.isPassword ? 'new-password' : 'off')"
+                t-att-maxlength="maxLength > 0 and maxLength"
+                t-att-placeholder="placeholder"
+                t-on-blur="onBlur"
+                t-ref="input"
+        />
+    </t>
+    <div id="googleMap" class="gmap_class" t-ref="googleMap" style="height:200px"/>
+    </t>
+</templates>
