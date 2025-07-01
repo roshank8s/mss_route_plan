@@ -216,7 +216,7 @@ class RoutePlaning(models.Model):
         """Open pivot analysis for vehicles filtered by today's weekday."""
         weekday = fields.Date.context_today(self).strftime('%A').lower()
         pivot_id = self.env.ref('mss_route_plan.view_fleet_vehicle_pivot').id
-        list_id = self.env.ref('mss_route_plan.view_unassigned_orders_tree').id
+        list_id = self.env.ref('mss_route_plan.action_unassigned_orders_today').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Vehicle Report',
