@@ -201,6 +201,30 @@ class RoutePlaning(models.Model):
         for route_id in routes:
             routes[route_id].sort(key=lambda x: x["sequence"])
         return {"routes": routes}
+    def action_assign_vehicle(self):
+        """Assign the active vehicle to the selected route planing records."""
+        vehicle = False
+        if self.env.context.get('active_id'):
+            vehicle = self.env['fleet.vehicle'].browse(self.env.context['active_id'])
+        if vehicle:
+            for rec in self:
+                rec.write({'vehicle_id': vehicle.id, 'manual_vehicle_override': True})
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
+
+    @api.model
+    def action_fleet_vehicle_report(self):
+        """Open pivot analysis for vehicles filtered by today's weekday."""
+        weekday = fields.Date.context_today(self).strftime('%A').lower()
+        pivot_id = self.env.ref('mss_route_plan.view_fleet_vehicle_pivot').id
+        list_id = self.env.ref('mss_route_plan.view_unassigned_orders_tree').id
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Vehicle Report',
+            'res_model': 'fleet.vehicle',
+            'view_mode': 'pivot,tree',
+            'views': [(pivot_id, 'pivot'), (list_id, 'tree')],
+            'domain': [('delivery_days.name', '=', weekday)],
+        }
  ################################################################################
 
     @api.model
