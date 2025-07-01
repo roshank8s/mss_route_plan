@@ -105,6 +105,8 @@
                 <field name="license_plate"/>
                 <field name="driver_id"/>
                 <field name="is_scheduled_today"/>
+                <button name="action_view_unassigned_pickings" type="object"
+                        string="Unassigned Deliveries" class="oe_link"/>
             </list>
         </field>
     </record>
