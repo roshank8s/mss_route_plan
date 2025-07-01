@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="traktop_rule_driver" model="ir.rule">
+    <field name="name">Route Planing: Visible to assigned vehicle driver only</field>
+    <field name="model_id" ref="mss_route_plan.model_route_planing"/>
+    <field name="domain_force"><![CDATA[
+      [('vehicle_id.driver_id', '=', user.partner_id.id)] if not user.has_group('base.group_system') else [(1, '=', 1)]
+    ]]></field>
+    <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+  </record>
+</odoo>
