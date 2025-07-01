@@ -214,11 +214,13 @@ class RoutePlaning(models.Model):
             vehicle = self.env['fleet.vehicle'].browse(self.env.context['active_id'])
         if vehicle:
             for rec in self:
+                rec.write({'vehicle_id': vehicle.id, 'manual_vehicle_override': True})
                 rec.write({
                     'vehicle_id': vehicle.id,
                     'driver_id': vehicle.driver_id.id,
                     'manual_vehicle_override': True
                 })
+
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
@@ -226,6 +228,7 @@ class RoutePlaning(models.Model):
         """Open pivot analysis for vehicles filtered by today's weekday."""
         weekday = fields.Date.context_today(self).strftime('%A').lower()
         pivot_id = self.env.ref('mss_route_plan.view_fleet_vehicle_pivot').id
+        list_id = self.env.ref('mss_route_plan.view_unassigned_orders_tree').id
         list_id = self.env.ref('mss_route_plan.action_unassigned_orders_today').id
         return {
             'type': 'ir.actions.act_window',
@@ -233,7 +236,10 @@ class RoutePlaning(models.Model):
             'res_model': 'fleet.vehicle',
             'view_mode': 'pivot,tree',
             'views': [(pivot_id, 'pivot'), (list_id, 'tree')],
+            'domain': [('delivery_days.name', '=', weekday)],
+
             'domain': [('is_scheduled_today', '=', True)],
+
         }
  ################################################################################
 

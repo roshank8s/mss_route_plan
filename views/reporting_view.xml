@@ -84,6 +84,7 @@
         <field name="view_id" ref="view_unassigned_orders_tree"/>
         <field name="domain">['&amp;',('delivery_date','=',context_today()),('vehicle_id','=',False)]</field>
     </record>
+
     
     <record id="action_report_delivery" model="ir.actions.act_window">
         <field name="name">Delivery Order Analysis</field>
@@ -123,7 +124,6 @@
         <field name="state">code</field>
         <field name="code">action = model.action_fleet_vehicle_report()</field>
     </record>
-
     <record id="action_fleet_open_unassigned" model="ir.actions.server">
         <field name="name">Open Unassigned Orders</field>
         <field name="model_id" ref="fleet.model_fleet_vehicle"/>
