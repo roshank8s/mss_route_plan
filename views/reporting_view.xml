@@ -60,6 +60,19 @@
         </field>
     </record>
 
+    <!-- Tree view for vehicles used in the report action -->
+    <record id="view_fleet_vehicle_tree_report" model="ir.ui.view">
+        <field name="name">fleet.vehicle.tree.report</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="arch" type="xml">
+            <tree string="Vehicles">
+                <field name="name"/>
+                <field name="driver_id"/>
+                <field name="delivery_days" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- Tree view for unassigned orders -->
     <record id="view_unassigned_orders_tree" model="ir.ui.view">
         <field name="name">route.planing.unassigned.tree</field>

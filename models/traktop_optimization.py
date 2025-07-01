@@ -216,21 +216,17 @@ class RoutePlaning(models.Model):
 
     @api.model
     def action_fleet_vehicle_report(self):
-        """Open pivot analysis for vehicles filtered by today's weekday."""
+        """Open pivot and list views of vehicles scheduled for today."""
         weekday = fields.Date.context_today(self).strftime('%A').lower()
         pivot_id = self.env.ref('mss_route_plan.view_fleet_vehicle_pivot').id
-        list_id = self.env.ref('mss_route_plan.view_unassigned_orders_tree').id
-        list_id = self.env.ref('mss_route_plan.action_unassigned_orders_today').id
+        tree_id = self.env.ref('mss_route_plan.view_fleet_vehicle_tree_report').id
         return {
             'type': 'ir.actions.act_window',
             'name': 'Vehicle Report',
             'res_model': 'fleet.vehicle',
             'view_mode': 'pivot,tree',
-            'views': [(pivot_id, 'pivot'), (list_id, 'tree')],
+            'views': [(pivot_id, 'pivot'), (tree_id, 'tree')],
             'domain': [('delivery_days.name', '=', weekday)],
-
-            'domain': [('is_scheduled_today', '=', True)],
-
         }
  ################################################################################
 
