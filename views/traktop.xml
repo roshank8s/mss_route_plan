@@ -106,6 +106,7 @@
           <filter string="Upcoming" name="filter_delivery_date_ge_today" domain="[('delivery_date','>=', context_today())]" date="delivery_date"/>
           <group expand="0" string="Group By">
             <filter string="By Delivery Date" name="group_by_delivery_date" context="{'group_by':'delivery_date'}"/>
+            <filter string="By Weekday" name="group_by_delivery_day" context="{'group_by':'delivery_day'}"/>
             <filter string="By Customer" name="group_by_partner_id" context="{'group_by':'partner_id'}"/>
             <filter string="By Vehicle" name="group_by_vehicle_id" context="{'group_by':'vehicle_id'}"/>
           </group>

@@ -45,6 +45,15 @@ class RoutePlaning(models.Model):
     partner_latitude = fields.Float('Latitude', digits=(10, 7))
     partner_longitude = fields.Float('Longitude', digits=(10, 7))
     delivery_date = fields.Datetime(string='Delivery Date')
+    delivery_day = fields.Selection([
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ], string='Week Day', compute='_compute_delivery_day', store=True)
     # distance = fields.Float(string="Distance (km)")
     vehicle_id = fields.Many2one('fleet.vehicle', string="Vehicle")
     vehicle_name = fields.Char(string="Vehicle Name")
@@ -171,6 +180,14 @@ class RoutePlaning(models.Model):
                 record.display_name = f'<a href="{sales_order_url}" target="_blank">{partner_name} - {order_name}</a>'
             else:
                 record.display_name = partner_name
+
+    @api.depends('delivery_date')
+    def _compute_delivery_day(self):
+        for rec in self:
+            if rec.delivery_date:
+                rec.delivery_day = rec.delivery_date.strftime('%A').lower()
+            else:
+                rec.delivery_day = False
     
     def action_view_map(self):
         self.ensure_one()
@@ -201,7 +218,23 @@ class RoutePlaning(models.Model):
         for route_id in routes:
             routes[route_id].sort(key=lambda x: x["sequence"])
         return {"routes": routes}
- ################################################################################
+###############################################################################
+#
+
+    @api.model
+    def action_delivery_next_week(self):
+        """Return deliveries scheduled within the next 7 days."""
+        today = fields.Date.context_today(self)
+        start_dt = datetime.combine(today, datetime.min.time())
+        end_dt = start_dt + timedelta(days=7)
+        action = self.env.ref('mss_route_plan.action_report_delivery_next_week').read()[0]
+        action['domain'] = [
+            ('delivery_date', '>=', fields.Datetime.to_string(start_dt)),
+            ('delivery_date', '<=', fields.Datetime.to_string(end_dt)),
+        ]
+        action.setdefault('context', {})
+        action['context'].update({'search_default_group_by_delivery_day': 1})
+        return action
 
     @api.model
     def fetch_vehicle_data(self):
