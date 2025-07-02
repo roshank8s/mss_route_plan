@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_delivery_next_week" model="ir.actions.server">
+        <field name="name">Deliveries Next Week</field>
+        <field name="model_id" ref="model_route_planing"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_delivery_next_week()</field>
+    </record>
+
+    <record id="action_report_delivery_next_week" model="ir.actions.act_window">
+        <field name="name">Deliveries Next 7 Days</field>
+        <field name="res_model">route.planing</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="view_ids" eval="[
+            (5,0,0),
+            (0,0,{'view_mode':'list', 'view_id': ref('view_traktop_list_report')}),
+            (0,0,{'view_mode':'pivot','view_id': ref('view_traktop_pivot_report')})
+        ]"/>
+        <field name="context">{'search_default_group_by_delivery_day':1}</field>
+    </record>
+
+    <menuitem id="menu_report_next_week"
+              name="Next Week Deliveries"
+              parent="menu_report"
+              action="action_delivery_next_week"
+              sequence="3"/>
+</odoo>
