@@ -56,6 +56,12 @@ class RoutePlaning(models.Model):
     route_sequence = fields.Integer("Route Sequence")
     _order = 'route_sequence, id'
 
+    delivery_weekday = fields.Char(
+        string="Weekday",
+        compute="_compute_delivery_weekday",
+        store=True,
+    )
+
     # Fields for distance and travel time
     travel_time = fields.Float(
         string="Drive Time (min)",
@@ -171,6 +177,17 @@ class RoutePlaning(models.Model):
                 record.display_name = f'<a href="{sales_order_url}" target="_blank">{partner_name} - {order_name}</a>'
             else:
                 record.display_name = partner_name
+
+    @api.depends('delivery_date')
+    def _compute_delivery_weekday(self):
+        user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+        for rec in self:
+            if rec.delivery_date:
+                dt = fields.Datetime.from_string(rec.delivery_date)
+                dt = pytz.UTC.localize(dt).astimezone(user_tz)
+                rec.delivery_weekday = dt.strftime('%A')
+            else:
+                rec.delivery_weekday = False
     
     def action_view_map(self):
         self.ensure_one()
@@ -504,6 +521,52 @@ class RoutePlaning(models.Model):
                         picking.name, partner.name
                     )
         return True
+
+    @api.model
+    def action_fetch_delivery_orders_week(self):
+        """Create route.planing records for the next 7 days including today."""
+        today = fields.Date.context_today(self)
+        existing_ids = self.search([]).mapped('delivery_order_id.id')
+
+        for offset in range(7):
+            day = today + timedelta(days=offset)
+            weekday = day.strftime('%A').lower()
+            start_dt = datetime.combine(day, datetime.min.time())
+            end_dt = datetime.combine(day, datetime.max.time())
+
+            partners = self.env['res.partner'].sudo().search([
+                ('delivery_day', '=', weekday)
+            ])
+
+            for partner in partners:
+                orders = self.env['sale.order'].sudo().search([
+                    ('state', '=', 'sale'),
+                    ('partner_shipping_id', '=', partner.id),
+                    ('commitment_date', '>=', fields.Datetime.to_string(start_dt)),
+                    ('commitment_date', '<=', fields.Datetime.to_string(end_dt)),
+                ])
+                for so in orders:
+                    pickings = so.picking_ids.filtered(lambda p: p.picking_type_id.code == 'outgoing')
+                    for picking in pickings:
+                        if picking.id in existing_ids:
+                            continue
+                        self.create({
+                            'delivery_order_id': picking.id,
+                            'partner_id':        partner.id,
+                            'delivery_address':  partner.contact_address,
+                            'delivery_date':     so.commitment_date,
+                            'partner_latitude':  partner.partner_latitude,
+                            'partner_longitude': partner.partner_longitude,
+                            'build_time':        so.build_time or 0,
+                        })
+                        existing_ids.append(picking.id)
+
+        action = self.env.ref('mss_route_plan.action_route_plan_week').read()[0]
+        action['domain'] = [
+            ('delivery_date', '>=', fields.Datetime.to_string(datetime.combine(today, datetime.min.time()))),
+            ('delivery_date', '<', fields.Datetime.to_string(datetime.combine(today + timedelta(days=7), datetime.min.time()))),
+        ]
+        return action
 
 
     def write(self, vals):
