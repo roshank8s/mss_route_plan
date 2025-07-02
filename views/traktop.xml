@@ -283,6 +283,33 @@
       <field name="view_id" ref="view_field_service_custom_list"/>
     </record>
 
+    <!-- =============================================================== -->
+    <!-- Next Week Orders action and view                                -->
+    <!-- =============================================================== -->
+    <record id="view_sale_order_next_week_tree" model="ir.ui.view">
+      <field name="name">sale.order.next.week.tree</field>
+      <field name="model">sale.order</field>
+      <field name="arch" type="xml">
+        <tree string="Next Week Orders">
+          <field name="partner_shipping_id"/>
+          <field name="commitment_date"/>
+          <field name="partner_shipping_id.delivery_day" string="Delivery Day"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="action_next_week_orders" model="ir.actions.act_window">
+      <field name="name">Next Week Orders</field>
+      <field name="res_model">sale.order</field>
+      <field name="view_mode">tree,pivot,form</field>
+      <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_sale_order_next_week_tree')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale.view_sales_order_pivot')})
+        ]"/>
+      <field name="context">{'group_by':'partner_shipping_id.delivery_day'}</field>
+    </record>
+
     <!-- =================================================================== -->
     <!-- Menu Items -->
     <!-- =================================================================== -->
@@ -303,6 +330,12 @@
         action="action_fetch_week_orders"
         parent="traktop_main_menu"
         sequence="15"/>
+
+    <menuitem id="menu_next_week_orders"
+        name="Next Week Orders"
+        action="action_next_week_orders"
+        parent="traktop_main_menu"
+        sequence="18"/>
 
     <menuitem id="menu_field_services" 
         name="Field Services" 

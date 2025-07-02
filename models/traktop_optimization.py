@@ -568,6 +568,30 @@ class RoutePlaning(models.Model):
         ]
         return action
 
+    @api.model
+    def get_next_week_orders(self):
+        """Return next week's confirmed sale orders grouped by delivery day."""
+        today = fields.Date.context_today(self)
+        # Monday is 0 in Python's weekday; compute days until next Monday
+        days_until_monday = (7 - today.weekday()) % 7 or 7
+        next_monday = today + timedelta(days=days_until_monday)
+        next_sunday = next_monday + timedelta(days=6)
+
+        start_dt = datetime.combine(next_monday, datetime.min.time())
+        end_dt = datetime.combine(next_sunday, datetime.max.time())
+
+        action = self.env.ref('mss_route_plan.action_next_week_orders').read()[0]
+        action.update({
+            'domain': [
+                ('state', '=', 'sale'),
+                ('commitment_date', '>=', fields.Datetime.to_string(start_dt)),
+                ('commitment_date', '<=', fields.Datetime.to_string(end_dt)),
+                ('partner_shipping_id.delivery_day', '!=', False),
+            ],
+            'context': {'group_by': 'partner_shipping_id.delivery_day'},
+        })
+        return action
+
 
     def write(self, vals):
         # Check if vehicle_id is being updated manually (without the optimization context)
