@@ -38,7 +38,19 @@ Route planing in Odoo refers to enhancing the delivery and logistics process by 
     'license': 'LGPL-3',
     'assets': {
         'web.assets_backend': [
-            'mss_route_plan/static/src/**/*',
+            'mss_route_plan/static/src/css/styles.css',
+            'mss_route_plan/static/src/js/address_autocomplete.js',
+            'mss_route_plan/static/src/js/address_multiple_markers_gmap.js',
+            'mss_route_plan/static/src/js/arrow_visibility.js',
+            'mss_route_plan/static/src/js/field_service_gmap.js',
+            'mss_route_plan/static/src/js/location_updater.js',
+            'mss_route_plan/static/src/js/no_selector_tree.js',
+            'mss_route_plan/static/src/js/unified_route_gmap.js',
+            'mss_route_plan/static/src/js/usage_display.js',
+            'mss_route_plan/static/src/js/vehicle_assignment.js',
+            'mss_route_plan/static/src/xml/address_autocomplete.xml',
+            'mss_route_plan/static/src/xml/address_multiple_markers_gmap_templates.xml',
+            'mss_route_plan/static/src/xml/vehicle_assignment.xml',
         ],
         'web.assets_frontend': [
         ],
