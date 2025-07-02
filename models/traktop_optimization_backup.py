@@ -115,8 +115,6 @@ class RoutePlaning(models.Model):
             record.usage_display = registration.usage_display or 'N/A'
 
 
-    def _compute_usage(self):
-        self.env
     def action_view_products(self):
         self.ensure_one()
         # Use your module’s XML‑ID here
