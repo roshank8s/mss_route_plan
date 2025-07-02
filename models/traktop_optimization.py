@@ -1246,13 +1246,6 @@ class FleetVehicle(models.Model):
         'vehicle_id', 'day_id',
         string='Delivery Days'
     )
-    address = fields.Char(string="Address")
-    longitude = fields.Char(string="Longitude")
-    latitude = fields.Char(string="Latitude")
-    ne_latitude = fields.Char(string="North-East Latitude")
-    ne_longitude = fields.Char(string="North-East Longitude")
-    sw_latitude = fields.Char(string="South-East Latitude")
-    sw_longitude = fields.Char(string="South-East Longitude")
     cost_value = fields.Float(
         string="Cost Value",
         help="Enter the cost value for the selected cost type (e.g., 5 for fixed, 20 for per hour, etc.)"
