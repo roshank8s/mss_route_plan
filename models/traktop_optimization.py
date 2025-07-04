@@ -56,12 +56,6 @@ class RoutePlaning(models.Model):
     route_sequence = fields.Integer("Route Sequence")
     _order = 'route_sequence, id'
 
-    delivery_weekday = fields.Char(
-        string="Weekday",
-        compute="_compute_delivery_weekday",
-        store=True,
-    )
-
     # Fields for distance and travel time
     travel_time = fields.Float(
         string="Drive Time (min)",
@@ -98,6 +92,31 @@ class RoutePlaning(models.Model):
     #         total = len(moves)
     #         picked = sum(1 for m in moves if m.picked)
     #         record.product_summary = f"{picked} / {total}"
+
+
+    def action_assign_selected(self, vehicle_id=None):
+        """
+        Called by the header button in the Assign Orders list.
+        Writes the context’s default_vehicle_id on all selected rows.
+        """
+        vehicle_id = self.env.context.get('default_vehicle_id')
+        if not vehicle_id:
+            return
+
+        # Assign the vehicle to all selected records
+        self.write({'vehicle_id': vehicle_id})
+
+        # Feedback notification
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Assigned'),
+                'message': _('%d order(s) assigned to the vehicle.') % len(self),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
 
     info_message = fields.Html(string="Info", compute='_compute_info_message', sanitize=False)
 
@@ -177,17 +196,6 @@ class RoutePlaning(models.Model):
                 record.display_name = f'<a href="{sales_order_url}" target="_blank">{partner_name} - {order_name}</a>'
             else:
                 record.display_name = partner_name
-
-    @api.depends('delivery_date')
-    def _compute_delivery_weekday(self):
-        user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-        for rec in self:
-            if rec.delivery_date:
-                dt = fields.Datetime.from_string(rec.delivery_date)
-                dt = pytz.UTC.localize(dt).astimezone(user_tz)
-                rec.delivery_weekday = dt.strftime('%A')
-            else:
-                rec.delivery_weekday = False
     
     def action_view_map(self):
         self.ensure_one()
@@ -521,76 +529,6 @@ class RoutePlaning(models.Model):
                         picking.name, partner.name
                     )
         return True
-
-    @api.model
-    def action_fetch_delivery_orders_week(self):
-        """Create route.planing records for the next 7 days including today."""
-        today = fields.Date.context_today(self)
-        existing_ids = self.search([]).mapped('delivery_order_id.id')
-
-        for offset in range(7):
-            day = today + timedelta(days=offset)
-            weekday = day.strftime('%A').lower()
-            start_dt = datetime.combine(day, datetime.min.time())
-            end_dt = datetime.combine(day, datetime.max.time())
-
-            partners = self.env['res.partner'].sudo().search([
-                ('delivery_day', '=', weekday)
-            ])
-
-            for partner in partners:
-                orders = self.env['sale.order'].sudo().search([
-                    ('state', '=', 'sale'),
-                    ('partner_shipping_id', '=', partner.id),
-                    ('commitment_date', '>=', fields.Datetime.to_string(start_dt)),
-                    ('commitment_date', '<=', fields.Datetime.to_string(end_dt)),
-                ])
-                for so in orders:
-                    pickings = so.picking_ids.filtered(lambda p: p.picking_type_id.code == 'outgoing')
-                    for picking in pickings:
-                        if picking.id in existing_ids:
-                            continue
-                        self.create({
-                            'delivery_order_id': picking.id,
-                            'partner_id':        partner.id,
-                            'delivery_address':  partner.contact_address,
-                            'delivery_date':     so.commitment_date,
-                            'partner_latitude':  partner.partner_latitude,
-                            'partner_longitude': partner.partner_longitude,
-                            'build_time':        so.build_time or 0,
-                        })
-                        existing_ids.append(picking.id)
-
-        action = self.env.ref('mss_route_plan.action_route_plan_week').read()[0]
-        action['domain'] = [
-            ('delivery_date', '>=', fields.Datetime.to_string(datetime.combine(today, datetime.min.time()))),
-            ('delivery_date', '<', fields.Datetime.to_string(datetime.combine(today + timedelta(days=7), datetime.min.time()))),
-        ]
-        return action
-
-    @api.model
-    def get_next_week_orders(self):
-        """Return next week's confirmed sale orders grouped by delivery day."""
-        today = fields.Date.context_today(self)
-        # Monday is 0 in Python's weekday; compute days until next Monday
-        days_until_monday = (7 - today.weekday()) % 7 or 7
-        next_monday = today + timedelta(days=days_until_monday)
-        next_sunday = next_monday + timedelta(days=6)
-
-        start_dt = datetime.combine(next_monday, datetime.min.time())
-        end_dt = datetime.combine(next_sunday, datetime.max.time())
-
-        action = self.env.ref('mss_route_plan.action_next_week_orders').read()[0]
-        action.update({
-            'domain': [
-                ('state', '=', 'sale'),
-                ('commitment_date', '>=', fields.Datetime.to_string(start_dt)),
-                ('commitment_date', '<=', fields.Datetime.to_string(end_dt)),
-                ('partner_shipping_id.delivery_day', '!=', False),
-            ],
-            'context': {'group_by': 'partner_shipping_id.delivery_day'},
-        })
-        return action
 
 
     def write(self, vals):

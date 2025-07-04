@@ -328,31 +328,31 @@ class ResUsers(models.Model):
 
     @api.model
     def open_module_action(self):
-        _logger.info(">>> open_module_action() called by user ID: %s (Partner ID: %s)", self.env.user.id, self.env.user.partner_id.id)
-
-        registration = self.env['mss_route_plan.user.registration'].sudo().search([
-            ('route_api', '!=', False)
-        ], limit=1)
-
-        if registration:
-            _logger.info(">>> Found registration record: ID=%s | route_api=%s", registration.id, registration.route_api)
-        else:
-            _logger.warning(">>> No registration record found for user: %s", self.env.user.id)
-
-        if registration and registration.route_api:
-            _logger.info(">>> route_api found. Granting access to module (action_traktop).")
-            return self.env.ref('mss_route_plan.action_traktop').sudo().read()[0]
-        else:
-            _logger.info(">>> route_api not found. Opening registration wizard.")
-            _logger.info(">>> Admin user. Opening registration wizard.")
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Activate Plugin',
-                'res_model': 'user.register.wizard',
-                'view_mode': 'form',
-                'target': 'new',
-                'view_id': self.env.ref('mss_route_plan.view_user_register_wizard').id,
-            }
+            _logger.info(">>> open_module_action() called by user ID: %s (Partner ID: %s)", self.env.user.id, self.env.user.partner_id.id)
+    
+            registration = self.env['mss_route_plan.user.registration'].sudo().search([
+                ('route_api', '!=', False)
+            ], limit=1)
+    
+            if registration:
+                _logger.info(">>> Found registration record: ID=%s | route_api=%s", registration.id, registration.route_api)
+            else:
+                _logger.warning(">>> No registration record found for user: %s", self.env.user.id)
+    
+            if registration and registration.route_api:
+                _logger.info(">>> route_api found. Granting access to module (action_route_planning_dashboard).")
+                return self.env.ref('mss_route_plan.action_route_planning_dashboard').sudo().read()[0]
+            else:
+                _logger.info(">>> route_api not found. Opening registration wizard.")
+                _logger.info(">>> Admin user. Opening registration wizard.")
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Activate Plugin',
+                    'res_model': 'user.register.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'view_id': self.env.ref('mss_route_plan.view_user_register_wizard').id,
+                }
 
 class OpenModuleTrigger(models.TransientModel):
     _name = 'open.module.trigger'

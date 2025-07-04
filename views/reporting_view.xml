@@ -84,7 +84,7 @@
             name="Reporting" 
             parent="traktop_main_menu" 
             sequence="40"/>
-    <menuitem id="menu_report_delivery"
+    <!-- <menuitem id="menu_report_delivery"
               name="Delivery Orders"
               parent="menu_report"
               action="action_report_delivery"
@@ -94,5 +94,5 @@
               name="Field Service"
               parent="menu_report"
               action="action_report_task"
-              sequence="2"/>          
+              sequence="2"/>           -->
 </odoo>

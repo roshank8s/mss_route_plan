@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <!-- 2) Assign Orders list view -->
+    <!-- <record id="view_route_planning_assign_list" model="ir.ui.view">
+      <field name="name">route.planing.assign.list</field>
+      <field name="model">route.planing</field>
+      <field name="arch" type="xml">
+        <list editable="bottom" string="Assign Orders">
+
+          <header>
+            <button name="action_assign_selected"
+                    type="object"
+                    string="Assign to Vehicle"
+                    class="oe_highlight"/>
+          </header>
+
+          <field name="delivery_order_id" string="Order"/>
+          <field name="partner_id"        string="Customer"/>
+          <field name="delivery_date"     string="Date"/>
+          <field name="vehicle_id"        string="Vehicle"/>
+        </list>
+      </field>
+    </record> -->
+
+    <!-- 3) Assign Orders form view -->
+    <!-- <record id="view_route_planning_form" model="ir.ui.view">
+      <field name="name">route.planing.form</field>
+      <field name="model">route.planing</field>
+      <field name="arch" type="xml">
+        <form string="Delivery Order Assignment">
+          <sheet>
+            <group>
+              <field name="delivery_order_id"/>
+              <field name="partner_id"/>
+              <field name="delivery_date"/>
+              <field name="vehicle_id"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record> -->
+    <!-- 1) Assign Orders window action -->
+    <!-- <record id="action_vehicle_assign_orders" model="ir.actions.act_window">
+      <field name="name">Assign Orders</field>
+      <field name="res_model">route.planing</field>
+      <field name="view_mode">list,form</field>
+      <field name="views" eval="[
+        [ref('mss_route_plan.view_route_planning_assign_list'), 'list'],
+        [ref('mss_route_plan.view_route_planning_form'),    'form']
+      ]"/>
+      <field name="domain">['|',('vehicle_id','=',active_id),('vehicle_id','=',False)]</field>
+      <field name="context">{'default_vehicle_id': active_id}</field>
+    </record> -->
+    <!-- Wizard View -->
+    <record id="view_assign_route_wizard_form" model="ir.ui.view">
+      <field name="name">assign.route.wizard.form</field>
+      <field name="model">assign.route.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Assign Orders to Vehicle">
+          <group>
+            <field name="vehicle_id" readonly="1"/>
+            <field name="planing_ids" nolabel="1">
+              <list string="Route Planings" editable="bottom" create="false" delete="false">
+                <field name="delivery_order_id"/>
+                <field name="delivery_address"/>
+                <field name="partner_id"/>
+                <field name="delivery_date"/>
+                <field name="vehicle_id"/>
+              </list>
+            </field>
+          </group>
+          <footer>
+            <button name="assign_to_vehicle" type="object" string="Assign to Vehicle" class="oe_highlight"/>
+            <button string="Cancel" special="cancel" class="btn-secondary"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_assign_route_wizard" model="ir.actions.act_window">
+      <field name="name">Assign Route Orders</field>
+      <field name="res_model">assign.route.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="view_assign_route_wizard_form"/>
+      <field name="target">new</field>
+      <field name="context">{'default_vehicle_id': active_id}</field>
+    </record>
+    <!-- 4) Inherit the Fleet Vehicles LIST and inject buttons -->
+    <record id="view_route_planning_vehicle_list_custom" model="ir.ui.view">
+      <field name="name">fleet.vehicle.custom.route.planning.list</field>
+      <field name="model">fleet.vehicle</field>
+      <field name="priority" eval="20"/> 
+      <field name="arch" type="xml">
+        <list string="Route Planning Vehicles" create="false" edit="false">
+          <field name="license_plate"/>
+          <field name="model_id" widget="many2one_avatar" string="Model"/>
+          <field name="category_id" string="Category"/>
+          <field name="driver_id" widget="many2one_avatar" string="Driver"/>
+          <field name="weight_fill_display" readonly="1"/>
+          <field name="volume_fill_display" readonly="1"/>
+          <field name="job_action_html" widget="html"/>
+        </list>
+      </field>
+    </record>
+    <record id="action_see_jobs" model="ir.actions.act_window">
+      <field name="name">See Assigned Jobs</field>
+      <field name="res_model">route.planing</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="mss_route_plan.view_traktop_list"/>
+      <!-- <field name="context">{}</field> -->
+      <field name="domain">[('vehicle_id', '=', active_id)]</field>
+      <field name="target">current</field>
+    </record>    
+    <!-- 6) Route Planning dashboard action & menu -->
+    <record id="action_route_planning_dashboard" model="ir.actions.act_window">
+      <field name="name">Route Planning</field>
+      <field name="res_model">fleet.vehicle</field>
+      <field name="view_mode">list</field>
+      <field name="view_id" ref="view_route_planning_vehicle_list_custom"/>
+    </record>
+    <menuitem id="menu_route_planning_dashboard"
+              name="Route Planning"
+              parent="traktop_main_menu"
+              action="action_route_planning_dashboard"
+              sequence="5"/>
+
+  </data>
+</odoo>

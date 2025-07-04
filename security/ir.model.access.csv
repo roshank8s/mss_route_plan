@@ -14,3 +14,4 @@ access_route_unified_step_user,route.unified.step,model_route_unified_step,base.
 access_unified_route_optimizer,unified.route.optimizer,model_unified_route_optimizer,base.group_user,1,1,1,1
 access_delivery_day_user,delivery.day.user,model_delivery_day,base.group_user,1,0,0,0
 access_delivery_day_admin,delivery.day.admin,model_delivery_day,base.group_system,1,1,1,1
+access_assign_route_wizard,access.assign.route.wizard,model_assign_route_wizard,,1,1,1,0

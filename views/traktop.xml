@@ -13,30 +13,6 @@
         </list>
       </field>
     </record>
-    <record id="view_route_planing_week_list" model="ir.ui.view">
-      <field name="name">route.planing.week.list</field>
-      <field name="model">route.planing</field>
-      <field name="arch" type="xml">
-        <list string="Weekly Deliveries" create="false" delete="false">
-          <field name="delivery_order_id"/>
-          <field name="partner_id"/>
-          <field name="vehicle_id"/>
-          <field name="delivery_date"/>
-          <field name="delivery_weekday"/>
-        </list>
-      </field>
-    </record>
-
-    <record id="view_route_planing_week_pivot" model="ir.ui.view">
-      <field name="name">route.planing.week.pivot</field>
-      <field name="model">route.planing</field>
-      <field name="arch" type="xml">
-        <pivot string="Delivery Count">
-          <field name="delivery_weekday" type="col"/>
-          <field name="id" type="measure" string="Orders"/>
-        </pivot>
-      </field>
-    </record>
     <record id="action_traktop_products" model="ir.actions.act_window">
       <field name="name">Order Products</field>
       <field name="res_model">stock.move</field>
@@ -64,7 +40,7 @@
       <field name="name">route.planing.list</field>
       <field name="model">route.planing</field>
       <field name="arch" type="xml">
-        <list js_class="group_sortable_list" editable="bottom" create="false" delete="1" multi_edit="1" class="delivery-orders">
+        <list js_class="group_sortable_list" editable="bottom" create="True" delete="1" multi_edit="1" class="delivery-orders">
           <header>
             <button name="%(action_optimized_rec_created)d" type="action" string="Optimize" class="oe_highlight" icon="fa-cogs" groups="base.group_system"/>
             <button name="%(action_run_unified_optimizer)d"
@@ -246,23 +222,6 @@
       <field name="view_id" ref="view_traktop_multiple_markers_form"/>
       <field name="target">current</field>
     </record>
-    <record id="action_route_plan_week" model="ir.actions.act_window">
-      <field name="name">Upcoming Week Orders</field>
-      <field name="res_model">route.planing</field>
-      <field name="view_mode">list,pivot</field>
-      <field name="view_ids" eval="[
-            (5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_route_planing_week_list')}),
-            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_route_planing_week_pivot')})
-        ]"/>
-      <field name="context">{'group_by':'delivery_weekday'}</field>
-    </record>
-    <record id="action_fetch_week_orders" model="ir.actions.server">
-      <field name="name">Load Upcoming Week</field>
-      <field name="model_id" ref="model_route_planing"/>
-      <field name="state">code</field>
-      <field name="code">action = model.action_fetch_delivery_orders_week()</field>
-    </record>
     <record id="action_field_service_multiple_markers" model="ir.actions.act_window">
       <field name="name">Field Service Map</field>
       <field name="res_model">field.service.route.step</field>
@@ -283,65 +242,26 @@
       <field name="view_id" ref="view_field_service_custom_list"/>
     </record>
 
-    <!-- =============================================================== -->
-    <!-- Next Week Orders action and view                                -->
-    <!-- =============================================================== -->
-    <record id="view_sale_order_next_week_tree" model="ir.ui.view">
-      <field name="name">sale.order.next.week.tree</field>
-      <field name="model">sale.order</field>
-      <field name="arch" type="xml">
-        <tree string="Next Week Orders">
-          <field name="partner_shipping_id"/>
-          <field name="commitment_date"/>
-          <field name="partner_shipping_id.delivery_day" string="Delivery Day"/>
-        </tree>
-      </field>
-    </record>
-
-    <record id="action_next_week_orders" model="ir.actions.act_window">
-      <field name="name">Next Week Orders</field>
-      <field name="res_model">sale.order</field>
-      <field name="view_mode">tree,pivot,form</field>
-      <field name="view_ids" eval="[
-            (5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_sale_order_next_week_tree')}),
-            (0, 0, {'view_mode': 'pivot', 'view_id': ref('sale.view_sales_order_pivot')})
-        ]"/>
-      <field name="context">{'group_by':'partner_shipping_id.delivery_day'}</field>
-    </record>
-
     <!-- =================================================================== -->
     <!-- Menu Items -->
     <!-- =================================================================== -->
     <menuitem id="traktop_main_menu"
-        name="Route Planning"
-        action="action_open_route_optimization"
-        sequence="10"
+        name="Route Planing"
+        action="action_open_route_optimization" 
+        sequence="10" 
         web_icon="mss_route_plan,static/description/icon.png"/>
     
-    <menuitem id="traktop_menu"
-        name="Delivery Orders"
-        action="action_traktop"
-        parent="traktop_main_menu"
+    <!-- <menuitem id="traktop_menu" 
+        name="Delivery Orders" 
+        action="action_traktop" 
+        parent="traktop_main_menu" 
         sequence="10"/>
-
-    <menuitem id="menu_route_plan_week"
-        name="Upcoming Week"
-        action="action_fetch_week_orders"
-        parent="traktop_main_menu"
-        sequence="15"/>
-
-    <menuitem id="menu_next_week_orders"
-        name="Next Week Orders"
-        action="action_next_week_orders"
-        parent="traktop_main_menu"
-        sequence="18"/>
 
     <menuitem id="menu_field_services" 
         name="Field Services" 
         action="action_field_services" 
         parent="traktop_main_menu" 
-        sequence="20"/>
+        sequence="20"/> -->
 
     <!-- This is the parent menu for all map views -->
     <menuitem id="menu_maps_parent" 
